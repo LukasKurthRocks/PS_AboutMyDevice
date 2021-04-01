@@ -12,5 +12,6 @@ Auswahl oder alle Addressen in Tooltip anzeigen? Eventuell mit Kartennamen!?
   ![ALT](https://1.bp.blogspot.com/-XKK1lFaRbR4/XeGK54cDpII/AAAAAAAAMBc/1tZonS6NhPwiH-qvMXJsHnXhyLSxI9pKQCLcBGAsYHQ/s400/Untitled%2BProject.gif)\
   https://github.com/damienvanrobaeys/TS_AD_Protect\
   ![ALT](https://raw.githubusercontent.com/damienvanrobaeys/TS_AD_Protect/master/in_action.gif)
+  - [ ] Replace ActiveDirectory with ADSearcher!?
 - [ ] PowerShell v7 testen
 - [ ] Mirror für spezifische Arbeitsdaten

@@ -21,7 +21,6 @@ catch {
     Write-Host "Exception occured: $($_.Exception.Message)" -BackgroundColor Black -ForegroundColor Red
     return
 }
-#return
 
 #########################################################################
 #                        Load Main Panel                                #
@@ -68,16 +67,6 @@ catch {
     Write-Host "Error declaring GUI: $($_.Exception.Message)" -ForegroundColor Red
     #$_
     return
-}
-
-# Load XML variables
-$XAML.SelectNodes("//*") | ForEach-Object {
-    try {
-        Set-Variable -Name ($_.Name) -Value $Window.FindName($_.Name) -Scope Script
-    }
-    catch {
-        Write-Host "$($_.Exception.Message)" -ForegroundColor Red
-    }
 }
 
 #########################################################################
