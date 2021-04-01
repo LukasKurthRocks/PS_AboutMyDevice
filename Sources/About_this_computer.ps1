@@ -341,69 +341,133 @@ function Get_Details_Infos {
     else {
         $Get_Antivirus = Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct
     }
-    foreach ($antivirus in $Get_Antivirus) {
-        $Antivirus_list = $Antivirus_list + $antivirus.displayname + " "
-    }
+    #foreach ($antivirus in $Get_Antivirus) {
+    #    $Antivirus_list = $Antivirus_list + $antivirus.displayname + " "
+    #}
+    $CurrentAntivirusSolution = $Get_Antivirus | Sort-Object timestamp -Descending | Select-Object -First 1
 
-    # Get defender antivirus options
-    $Get_WinDefender = Get-MpComputerStatus
-    if ((($Get_WinDefender.AntispywareEnabled) -ne $True) -and (($Get_WinDefender.AntivirusEnabled) -ne $True)) {
-        $antivirus_Status_Label.Content = "Antispyware and Antivirus disabled"
-        $antivirus_Status_Label.Foreground = "yellow"
-        $antivirus_Status_Label.Fontweight = "bold"
-    }
-    elseif ((($Get_WinDefender.AntispywareEnabled) -eq $True) -and (($Get_WinDefender.AntivirusEnabled) -eq $True)) {
-        $antivirus_Status_Label.Content = "Antispyware and Antivirus enabled"
-    }
-    else {
-        if (($Get_WinDefender.AntispywareEnabled) -ne $True) {
-            $antivirus_Status_Label.Content = "Antispyware disabled"
+    if ($CurrentAntivirusSolution.displayName -eq "Windows Defender") {
+        # Get defender antivirus options
+        $Get_WinDefender = Get-MpComputerStatus
+        if ((($Get_WinDefender.AntispywareEnabled) -ne $True) -and (($Get_WinDefender.AntivirusEnabled) -ne $True)) {
+            $antivirus_Status_Label.Content = "Antispyware and Antivirus disabled"
             $antivirus_Status_Label.Foreground = "yellow"
             $antivirus_Status_Label.Fontweight = "bold"
         }
-        elseif (($Get_WinDefender.AntivirusEnabled) -ne $True) {
-            $antivirus_Status_Label.Content = "Antivirus disabled"
-            $antivirus_Status_Label.Foreground = "yellow"
-            $antivirus_Status_Label.Fontweight = "bold"
+        elseif ((($Get_WinDefender.AntispywareEnabled) -eq $True) -and (($Get_WinDefender.AntivirusEnabled) -eq $True)) {
+            $antivirus_Status_Label.Content = "Antispyware and Antivirus enabled"
         }
-    }
+        else {
+            if (($Get_WinDefender.AntispywareEnabled) -ne $True) {
+                $antivirus_Status_Label.Content = "Antispyware disabled"
+                $antivirus_Status_Label.Foreground = "yellow"
+                $antivirus_Status_Label.Fontweight = "bold"
+            }
+            elseif (($Get_WinDefender.AntivirusEnabled) -ne $True) {
+                $antivirus_Status_Label.Content = "Antivirus disabled"
+                $antivirus_Status_Label.Foreground = "yellow"
+                $antivirus_Status_Label.Fontweight = "bold"
+            }
+        }
 
-    if ((($Get_WinDefender.AntispywareSignatureAge) -gt "3") -and (($Get_WinDefender.AntivirusSignatureAge) -gt "3")) {
-        $antivirus_Last_Update_Label.Content = "Antispyware and Antivirus not up to date"
-        $antivirus_Last_Update_Label.Foreground = "yellow"
-        $antivirus_Last_Update_Label.Fontweight = "bold"
-    }
-    elseif ((($Get_WinDefender.AntispywareSignatureAge) -lt 3) -and (($Get_WinDefender.AntivirusSignatureAge) -lt 3)) {
-        $antivirus_Last_Update_Label.Content = "Antispyware et Antivirus up to date"
-        $antivirus_Last_Update_Label.Fontweight = "Normal"
-    }
-    else {
-        if (($Get_WinDefender.AntispywareEnabled) -ne $True) {
-            $antivirus_Last_Update_Label.Content = "Antispyware not up to date"
+        if ((($Get_WinDefender.AntispywareSignatureAge) -gt "3") -and (($Get_WinDefender.AntivirusSignatureAge) -gt "3")) {
+            $antivirus_Last_Update_Label.Content = "Antispyware and Antivirus not up to date"
             $antivirus_Last_Update_Label.Foreground = "yellow"
             $antivirus_Last_Update_Label.Fontweight = "bold"
         }
-        elseif (($Get_WinDefender.AntivirusEnabled) -ne $True) {
-            $antivirus_Last_Update_Label.Content = "Antivirus not up to date"
-            $antivirus_Last_Update_Label.Foreground = "yellow"
-            $antivirus_Last_Update_Label.Fontweight = "bold"
-
+        elseif ((($Get_WinDefender.AntispywareSignatureAge) -lt 3) -and (($Get_WinDefender.AntivirusSignatureAge) -lt 3)) {
+            $antivirus_Last_Update_Label.Content = "Antispyware et Antivirus up to date"
+            $antivirus_Last_Update_Label.Fontweight = "Normal"
         }
-    }
+        else {
+            if (($Get_WinDefender.AntispywareEnabled) -ne $True) {
+                $antivirus_Last_Update_Label.Content = "Antispyware not up to date"
+                $antivirus_Last_Update_Label.Foreground = "yellow"
+                $antivirus_Last_Update_Label.Fontweight = "bold"
+            }
+            elseif (($Get_WinDefender.AntivirusEnabled) -ne $True) {
+                $antivirus_Last_Update_Label.Content = "Antivirus not up to date"
+                $antivirus_Last_Update_Label.Foreground = "yellow"
+                $antivirus_Last_Update_Label.Fontweight = "bold"
+            }
+        }
 
-    $antivirus_Last_Scan_Block.Visibility = "Collapsed"
-    $Check_LastScan_Block.Visibility = "Collapsed"
-
-    if ((($Get_WinDefender.FullScanAge) -gt "10") -and (($Get_WinDefender.QuickScanAge) -gt "10")) {
-        $antivirus_Last_Scan_Label.Content = "Last antivirus check > 10 days"
-        $antivirus_Last_Scan_Label.Foreground = "yellow"
-        $antivirus_Last_Update_Label.Fontweight = "normal"
-        $antivirus_Last_Scan_Block.Visibility = "Visible"
-        $Check_LastScan_Block.Visibility = "Visible"
-    }
-    elseif ((($Get_WinDefender.FullScanAge) -lt 1) -or (($Get_WinDefender.QuickScanAge) -lt 1)) {
         $antivirus_Last_Scan_Block.Visibility = "Collapsed"
         $Check_LastScan_Block.Visibility = "Collapsed"
+
+        if ((($Get_WinDefender.FullScanAge) -gt "10") -and (($Get_WinDefender.QuickScanAge) -gt "10")) {
+            $antivirus_Last_Scan_Label.Content = "Last antivirus check > 10 days"
+            $antivirus_Last_Scan_Label.Foreground = "yellow"
+            $antivirus_Last_Update_Label.Fontweight = "normal"
+            $antivirus_Last_Scan_Block.Visibility = "Visible"
+            $Check_LastScan_Block.Visibility = "Visible"
+        }
+        elseif ((($Get_WinDefender.FullScanAge) -lt 1) -or (($Get_WinDefender.QuickScanAge) -lt 1)) {
+            $antivirus_Last_Scan_Block.Visibility = "Collapsed"
+            $Check_LastScan_Block.Visibility = "Collapsed"
+        }
+    }
+    else {
+        # Switch to determine the status of antivirus definitions and real-time protection.
+        # The values in this switch-statement are retrieved from the following website: http://community.kaseya.com/resources/m/knowexch/1020.aspx
+        switch ($CurrentAntivirusSolution.productState) {
+            "262144" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Disabled" }
+            "262160" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Disabled" }
+            "266240" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Enabled" }
+            "266256" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Enabled" }
+            "393216" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Disabled" }
+            "393232" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Disabled" }
+            "393488" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Disabled" }
+            "397312" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Enabled" }
+            "397328" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Enabled" }
+            "397584" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Enabled" }
+            default { $AVDefStatus = "Unknown" ; $AVRTStatus = "Unknown" }
+        }
+    
+        if ($AVRTStatus -eq "Disabled" -and $AVDefStatus -eq "Out of date") {
+            # Disabled and Out Of Date
+            $antivirus_Status_Label.Content = "Antivirus disabled and out of date"
+            $antivirus_Status_Label.Foreground = "yellow"
+            $antivirus_Status_Label.Fontweight = "bold"
+        }
+        elseif ($AVRTStatus -eq "Enabled" -and $AVDefStatus -eq "Out of date") {
+            # Enabled and Out Of Date
+            $antivirus_Status_Label.Content = "Antivirus enabled, but out of date"
+            $antivirus_Status_Label.Foreground = "yellow"
+            $antivirus_Status_Label.Fontweight = "bold"
+        }
+        else {
+            if ($AVRTStatus -eq "Disabled") {
+                # Disabled and Up To Date
+                $antivirus_Status_Label.Content = "Antivirus disabled"
+                $antivirus_Status_Label.Foreground = "yellow"
+                $antivirus_Status_Label.Fontweight = "bold"
+            }
+            else {
+                # Enabled and Up To Date
+                $antivirus_Status_Label.Content = "Antivirus enabled ($($CurrentAntivirusSolution.displayName))"
+            }
+        }
+        
+        $antivirus_Last_Scan_Block.Visibility = "Collapsed"
+        $Check_LastScan_Block.Visibility = "Collapsed"
+        
+        $AVDefinitionTimeStamp = [DateTime]$CurrentAntivirusSolution.timestamp
+        $AVDefinitionUpdateTimeSpan = New-TimeSpan -Start $AVDefinitionTimeStamp -End (Get-Date)
+
+        if ($AVDefinitionUpdateTimeSpan.Days -gt 10) {
+            $antivirus_Last_Scan_Label.Content = "Last antivirus check > 10 days"
+            $antivirus_Last_Scan_Label.Foreground = "yellow"
+            $antivirus_Last_Update_Label.Fontweight = "normal"
+            $antivirus_Last_Scan_Block.Visibility = "Visible"
+            $Check_LastScan_Block.Visibility = "Visible"
+        }
+        elseif ($AVDefinitionUpdateTimeSpan.Days -lt 1) {
+            #$AVDefinitionTimeString = $AVDefinitionTimeStamp.ToString([cultureinfo]::CreateSpecificCulture((Get-Culture)))
+            #$antivirus_Last_Scan_Label.Content = "Last definitions: $AVDefinitionTimeString"
+            $antivirus_Last_Scan_Block.Visibility = "Collapsed"
+            $Check_LastScan_Block.Visibility = "Collapsed"
+        }
     }
     
     $My_IP.content = "$IP_Address" + " / " + "$IP_Subnet"
@@ -966,7 +1030,6 @@ $Free_Space = $Win32_LogicalDisk.FreeSpace
 
 $Free_Space_Formated = "$("{0:N2}" -f ($Free_Space / 1GB))GB" 
 
-Write-Verbose "SizeTest: $documents_Size_Normal / $Total_size_full * 100" -Verbose
 [int]$Doc_Used_Size = '{0:N0}' -f (($documents_Size_Normal / $Total_size_full * 100), 1)
 [int]$download_Used_Size = '{0:N0}' -f (($download_size_Normal / $Total_size_full * 100), 1)
 [int]$music_Used_Size = '{0:N0}' -f (($music_size_Normal / $Total_size_full * 100), 1)
@@ -1099,7 +1162,6 @@ $refresh_monitor.Add_Click(
 )
 
 function Show_Chart_Stockage {
-    Write-Verbose "Test: Pie" -Verbose
     $DoughnutCollection = [LiveCharts.SeriesCollection]::new()
 
     $chartvalue1 = [LiveCharts.ChartValues[LiveCharts.Defaults.ObservableValue]]::new()
