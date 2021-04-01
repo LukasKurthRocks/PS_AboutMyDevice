@@ -453,18 +453,19 @@ function Get_Details_Infos {
         $Check_LastScan_Block.Visibility = "Collapsed"
         
         $AVDefinitionTimeStamp = [DateTime]$CurrentAntivirusSolution.timestamp
+        $AVDefinitionTimeString = $AVDefinitionTimeStamp.ToString([cultureinfo]::CreateSpecificCulture((Get-Culture)))
         $AVDefinitionUpdateTimeSpan = New-TimeSpan -Start $AVDefinitionTimeStamp -End (Get-Date)
 
         if ($AVDefinitionUpdateTimeSpan.Days -gt 10) {
-            $antivirus_Last_Scan_Label.Content = "Last antivirus check > 10 days"
-            $antivirus_Last_Scan_Label.Foreground = "yellow"
-            $antivirus_Last_Update_Label.Fontweight = "normal"
-            $antivirus_Last_Scan_Block.Visibility = "Visible"
-            $Check_LastScan_Block.Visibility = "Visible"
+            $antivirus_Last_Update_Label.Content = "Last definitions: $AVDefinitionTimeString"
+            $antivirus_Last_Update_Label.Fontweight = "bold"
+            
+            $antivirus_Last_Scan_Block.Visibility = "Collapsed"
+            $Check_LastScan_Block.Visibility = "Collapsed"
         }
         elseif ($AVDefinitionUpdateTimeSpan.Days -lt 1) {
-            #$AVDefinitionTimeString = $AVDefinitionTimeStamp.ToString([cultureinfo]::CreateSpecificCulture((Get-Culture)))
-            #$antivirus_Last_Scan_Label.Content = "Last definitions: $AVDefinitionTimeString"
+            $antivirus_Last_Update_Label.Content = "Last definitions: $AVDefinitionTimeString"
+            
             $antivirus_Last_Scan_Block.Visibility = "Collapsed"
             $Check_LastScan_Block.Visibility = "Collapsed"
         }
@@ -501,23 +502,26 @@ function Get_Details_Infos {
 
     # Get Graphic Wifi info + Translation
     $Wifi_Card_Info = (Get-NetAdapter -Name WLAN, WI-FI -ErrorAction SilentlyContinue)
-    if (($Wifi_Card_Info.count) -gt 1) {
-        foreach ($Card in $Wifi_Card_Info) {
-            ### Enum Disk 
-            $Wifi_Caption = $Card.InterfaceDescription
-            $Wifi_Driver_Version = $Card.DriverVersion
-            $Wifi_Cards = $Wifi_Cards + $Wifi_Caption + " ($Wifi_Driver_Version)" + "`n"
-        }
+    if (($Wifi_Card_Info.count) -eq 0) {
+        $Wifi_Card.Content = "N/A"
     }
     else {
-        $Wifi_Caption = $Wifi_Card_Info.InterfaceDescription
-        $Wifi_Driver_Version = $Wifi_Card_Info.DriverVersion
-        $Wifi_Cards = $Wifi_Cards + $Wifi_Caption + " ($Wifi_Driver_Version)" + "`n"
-
+        if (($Wifi_Card_Info.count) -gt 1) {
+            foreach ($Card in $Wifi_Card_Info) {
+                ### Enum Disk 
+                $Wifi_Caption = $Card.InterfaceDescription
+                $Wifi_Driver_Version = $Card.DriverVersion
+                $Wifi_Cards = $Wifi_Cards + $Wifi_Caption + " ($Wifi_Driver_Version)" + "`n"
+            }
+        }
+        else {
+            $Wifi_Caption = $Wifi_Card_Info.InterfaceDescription
+            $Wifi_Driver_Version = $Wifi_Card_Info.DriverVersion
+            $Wifi_Cards = $Wifi_Cards + $Wifi_Caption + " ($Wifi_Driver_Version)" + "`n"
+        }
+        $Wifi_Cards = $Wifi_Cards.trim()
+        $Wifi_Card.Content = $Wifi_Cards
     }
-    $Wifi_Cards = $Wifi_Cards.trim()
-    $Wifi_Card.Content = $Wifi_Cards
-
 }
 
 #########################################################################
@@ -616,8 +620,6 @@ function Get_Disk_Infos {
     }
 }
 
-# $Wifi_Card.Content = (Get-NetAdapter -name wi-fi).InterfaceDescription
-
 if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
     $Get_MECM_Client_Version = (Get-CimInstance -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
 }
@@ -644,7 +646,7 @@ $Current_Date = Get-Date
 $Diff_boot_time = $Current_Date - $Last_boot
 $Last_Reboot.Content = "Last reboot: $Last_boot"
 if (($Diff_boot_time.Days) -gt $Reboot_Days_Alert) {
-    # If(($Diff_boot_time.Days)-gt 1)
+    # if(($Diff_boot_time.Days)-gt 1)
     $Reboot_Alert_Block.Visibility = "Visible"
     $IsRebootRequired.Content = "Last reboot > $Reboot_Days_Alert days, please reboot your device when possible"
     $IsRebootRequired.FontWeight = "Bold"
@@ -692,10 +694,16 @@ if ($Search_Missing_Drivers -gt 0) {
 # }
 # $Printer.Content = $Win32_Printer.name
 
-# if ((Test-PendingReboot)-eq $true) {
+# if ($null -ne $Pending_Reboot) {
+# #if ((Test-PendingReboot)-eq $true) {}
+# if ($true) {
 # $Pending_Reboot.Visibility = "Visible"
-# } else {
+# }
+# else {
 # $Pending_Reboot.Visibility = "Collapsed"
+# }
+# } else {
+# Write-Host "Error: `$Pending_Reboot not found!" -BackgroundColor Black -ForegroundColor Red
 # }
 
 #########################################################################
