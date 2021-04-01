@@ -5,152 +5,90 @@
 try {
     [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null
     [System.Reflection.Assembly]::LoadWithPartialName('presentationframework') | Out-Null
-    [System.Reflection.Assembly]::LoadFrom('assembly\MahApps.Metro.dll') | Out-Null
-    [System.Reflection.Assembly]::LoadFrom('assembly\LiveCharts.dll') | Out-Null
-    [System.Reflection.Assembly]::LoadFrom('assembly\LiveCharts.Wpf.dll') | Out-Null
-    [System.Reflection.Assembly]::LoadFrom('assembly\MahApps.Metro.IconPacks.dll') | Out-Null
-    [System.Reflection.Assembly]::LoadFrom('assembly\LoadingIndicators.WPF.dll') | Out-Null
+
+    $AssemblyLocation = Join-Path -Path $PSScriptRoot -ChildPath .\assembly
+    foreach ($Assembly in (Get-ChildItem $AssemblyLocation -Filter *.dll)) {
+        [System.Reflection.Assembly]::LoadFrom($Assembly.FullName) | Out-Null
+    }
+
+    #[System.Reflection.Assembly]::LoadFrom('assembly\MahApps.Metro.dll') | Out-Null
+    #[System.Reflection.Assembly]::LoadFrom('assembly\LiveCharts.dll') | Out-Null
+    #[System.Reflection.Assembly]::LoadFrom('assembly\LiveCharts.Wpf.dll') | Out-Null
+    #[System.Reflection.Assembly]::LoadFrom('assembly\MahApps.Metro.IconPacks.dll') | Out-Null
+    #[System.Reflection.Assembly]::LoadFrom('assembly\LoadingIndicators.WPF.dll') | Out-Null
 }
 catch {
     Write-Host "Exception occured: $($_.Exception.Message)" -BackgroundColor Black -ForegroundColor Red
     return
 }
+#return
 
-function LoadXml ($global:filename) {
-    $XamlLoader = (New-Object System.Xml.XmlDocument)
-    $XamlLoader.Load($filename)
-    return $XamlLoader
+#########################################################################
+#                        Load Main Panel                                #
+#########################################################################
+
+$XamlLayoutFileName = "About_this_computer.xaml"
+$XamlLayoutFile = "$PSScriptRoot\$XamlLayoutFileName"
+
+Write-Verbose "Loading GUI from: $($XamlLayoutFile)"
+try {
+    [xml]$XAML = ( (Get-Content -Path $XamlLayoutFile -Encoding UTF8) )
+
+    #$XAML=(New-Object System.Xml.XmlDocument)
+    #$XAML.Load("$XamlLayoutFile")
+    #$XAML | Out-Host
+    #Write-Host "XAML: $XAML"
+
+    # Remove XML attributes that break a couple things.
+    #   Without this, you must manually remove the attributes
+    #   after pasting from Visual Studio. If more attributes
+    #   need to be removed automatically, add them below.
+    $AttributesToRemove = @(
+        'x:Class',
+        'mc:Ignorable'
+    )
+
+    # Standard: Window, main is MetroWindow this time
+    foreach ($Attrib in $AttributesToRemove) {
+        if ($XAML.MetroWindow) {
+            if ($XAML.MetroWindow.GetAttribute($Attrib)) {
+                $XAML.MetroWindow.RemoveAttribute($Attrib)
+            }
+        } else {
+            Write-Host "We do not have a MetroWindow property"
+            return
+        }
+    }
+
+    $Reader = (New-Object System.Xml.XmlNodeReader $XAML)
+    $Window = [Windows.Markup.XamlReader]::Load($Reader)
+} catch {
+    Write-Host "Error declaring GUI: $($_.Exception.Message)" -ForegroundColor Red
+    #$_
+    return
 }
 
-# Load MainWindow
-$XamlMainWindow = LoadXml("About_this_computer.xaml")
-$Reader = (New-Object System.Xml.XmlNodeReader $XamlMainWindow)
-$Form = [Windows.Markup.XamlReader]::Load($Reader)
+# Load XML variables
+$XAML.SelectNodes("//*") | ForEach-Object {
+    try {
+        Set-Variable -Name ($_.Name) -Value $Window.FindName($_.Name) -Scope Script
+    } catch {
+        Write-Host "$($_.Exception.Message)" -ForegroundColor Red
+    }
+}
 
-########################################################################################################################################################################################################
-#*******************************************************************************************************************************************************************************************************
-#BUTTONS AND LABELS INITIALIZATION 
-#*******************************************************************************************************************************************************************************************************
-########################################################################################################################################################################################################
+#########################################################################
+#                        BUTTONS AND LABELS INITIALIZATION              #
+#########################################################################
 
-#************************************************************************** DATAGRID *******************************************************************************************************************
-$Doughnut = $form.FindName("Doughnut")
-
-$OS_Titre = $form.FindName("OS_Titre")
-$OS_Version = $form.FindName("OS_Version")
-$Processeur = $form.FindName("Processeur")
-$Memory = $form.FindName("Memory")
-$Graphisme = $form.FindName("Graphisme")
-$Serial = $form.FindName("Serial")
-$My_Disk_Info = $form.FindName("My_Disk_Info")
-$Ma_Machine = $form.FindName("Ma_Machine")
-$Refresh_Once = $form.FindName("Refresh_Once")
-$Mon_FARO = $form.FindName("Mon_FARO")
-$Tab_control = $form.FindName("Tab_control")
-$Pending_Reboot = $form.FindName("Pending_Reboot")
-$IsRebootRequired = $form.FindName("IsRebootRequired")
-$MonitorList = $form.FindName("MonitorList")
-$Device_Model = $form.FindName("Device_Model")
-
-$Last_Reboot = $form.FindName("Last_Reboot")
-$Last_Reboot_Alert = $form.FindName("Last_Reboot_Alert")
-$Reboot_Alert_Block = $form.FindName("Reboot_Alert_Block")
-
-$Website = $form.FindName("Website")
-$Chat = $form.FindName("Chat")
-$Mail = $form.FindName("Mail")
-$Yammer = $form.FindName("Yammer")
-$Send_Logs = $form.FindName("Send_Logs")
-$Our_Phone = $form.FindName("Our_Phone")
-
-$Yammer_Block = $form.FindName("Yammer_Block")
-$Chat_Block = $form.FindName("Chat_Block")
-$Website_Block = $form.FindName("Website_Block")
-$Issue_Block = $form.FindName("Issue_Block")
-$Tool_Logo = $form.FindName("Tool_Logo")
-
-$Doughnut_OneDrive = $form.FindName("Doughnut_OneDrive")
-$My_OneDrive_Info = $form.FindName("My_OneDrive_Info")
-$MonBouton = $form.FindName("MonBouton")
-$Next_logo = $form.FindName("Next_logo")
-$refresh_monitor = $form.FindName("refresh_monitor")
-
-$Disk_Percent_Title = $form.FindName("Disk_Percent_Title")
-$SubMenu_Home = $form.FindName("SubMenu_Home")
-
-$Soft_List = $form.FindName("Soft_List")
-$Export_Services = $form.FindName("Export_Services")
-$Export_Process = $form.FindName("Export_Process")
-$Updates_History = $form.FindName("Updates_History")
-$Action_Sleep = $form.FindName("Action_Sleep")
-$Action_Restart = $form.FindName("Action_Restart")
-$Action_Shutdown = $form.FindName("Action_Shutdown")
-$Action_LogOut = $form.FindName("Action_LogOut")
-$Logs_Support = $form.FindName("Logs_Support")
-
-$GPO_User = $form.FindName("GPO_User")
-$Scheduled_Tasks = $form.FindName("Scheduled_Tasks")
-
-$Chart = $form.FindName("Chart")
-$Bar = $form.FindName("Bar")
-$MyDesktop = $form.FindName("MyDesktop")
-$MyDocs = $form.FindName("MyDocs")
-$Downloads = $form.FindName("Downloads")
-$Music = $form.FindName("Music")
-$Free = $form.FindName("Free")
-
-$Storage_Design = $form.FindName("Storage_Design")
-$Disk_Warning = $form.FindName("Disk_Warning")
-$Main_bar = $form.FindName("Main_bar")
-
-
-$Legend_Border_MyDesktop = $form.FindName("Legend_Border_MyDesktop")
-$Legend_Label_MyDesktop = $form.FindName("Legend_Label_MyDesktop")
-
-$Legend_Border_MyDocs = $form.FindName("Legend_Border_MyDocs")
-$Legend_Label_MyDocs = $form.FindName("Legend_Label_MyDocs")
-
-$Legend_Border_Downloads = $form.FindName("Legend_Border_Downloads")
-$Legend_Label_Downloads = $form.FindName("Legend_Label_Downloads")
-
-$Legend_Border_Music = $form.FindName("Legend_Border_Music")
-$Legend_Label_Music = $form.FindName("Legend_Label_Music")
-
-$Legend_Border_Free = $form.FindName("Legend_Border_Free")
-$Legend_Label_Free = $form.FindName("Legend_Label_Free")
-
-
-$Missing_Drivers_Label = $form.FindName("Missing_Drivers_Label")
-$Printer = $form.FindName("Printer")
-$My_IP = $form.FindName("My_IP")
-$My_MAC = $form.FindName("My_MAC")
-$Domain_name = $form.FindName("Domain_name")
-$Site_code = $form.FindName("Site_code")
-$SCCM_Status = $form.FindName("SCCM_Status")
-$BIOS_Version = $form.FindName("BIOS_Version")
-$Installed_antivirus = $form.FindName("Installed_antivirus")
-$Check_Drivers_Block = $form.FindName("Check_Drivers_Block")
-$Missing_Drivers_Block = $form.FindName("Missing_Drivers_Block")
-
-
-$Graphic_Card_details = $form.FindName("Graphic_Card_details")
-$Wifi_Card = $form.FindName("Wifi_Card")
-
-$MECM_Client_Block = $form.FindName("MECM_Client_Block")
-$MECM_Client_Version_Block = $form.FindName("MECM_Client_Version_Block")
-$MECM_Client_Version_Label = $form.FindName("MECM_Client_Version_Label")
-
-
-$antivirus_Status_Label = $form.FindName("antivirus_Status_Label")
-$antivirus_Last_Update_Block = $form.FindName("antivirus_Last_Update_Block")
-$antivirus_Last_Update_Label = $form.FindName("antivirus_Last_Update_Label")
-$antivirus_Last_Scan_Block = $form.FindName("antivirus_Last_Scan_Block")
-$antivirus_Last_Scan_Label = $form.FindName("antivirus_Last_Scan_Label")
-$Check_LastScan_Block = $form.FindName("Check_LastScan_Block")
-
-$Domain_WKG_Label = $form.FindName("Domain_WKG_Label")
-
-$List_Large_Files = $form.FindName("List_Large_Files")
+# Load XML variables
+$XAML.SelectNodes("//*") | ForEach-Object {
+    try {
+        Set-Variable -Name ($_.Name) -Value $Window.FindName($_.Name) -Scope Script
+    } catch {
+        Write-Host "$($_.Exception.Message)" -ForegroundColor Red
+    }
+}
 
 $Storage_Design.Add_Click(
     {
@@ -167,11 +105,9 @@ $Storage_Design.Add_Click(
 
 $Global:Current_Folder = Split-Path $MyInvocation.MyCommand.Path
 
-########################################################################################################################################################################################################
-#*******************************************************************************************************************************************************************************************************
-# PROGRESSBAR DESIGN USER
-#*******************************************************************************************************************************************************************************************************
-########################################################################################################################################################################################################
+#########################################################################
+#                        PROGRESSBAR DESIGN USER                        #
+#########################################################################
 
 $syncProgress = [hashtable]::Synchronized(@{})
 $childRunspace = [runspacefactory]::CreateRunspace()
@@ -256,12 +192,10 @@ function Close_modal_progress {
     $PsChildCmd.EndInvoke($Script:Childproc) | Out-Null
 }
 
-########################################################################################################################################################################################################
-#*******************************************************************************************************************************************************************************************************
-# PROGRESSBAR DESIGN USER
-#*******************************************************************************************************************************************************************************************************
-########################################################################################################################################################################################################
 
+#########################################################################
+#                        PROGRESSBAR DESIGN USER                        #
+#########################################################################
 
 # if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
 # $Win32_LogicalDisk = Get-CimInstance Win32_LogicalDisk | where {$_.DriveType -eq "3"}
@@ -294,11 +228,9 @@ else {
     $Win32_ComputerSystem = Get-WmiObject Win32_ComputerSystem
 }
 
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# INFORMATIONS FROM DETAILS PART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
+#########################################################################
+#                        INFORMATIONS FROM DETAILS PART                 #
+#########################################################################
 
 function Get_Details_Infos {
     # Get printer infos
@@ -351,9 +283,21 @@ function Get_Details_Infos {
         $Domain_WKG_Label.Content = "Workgroup name :"
         $Domain_test = $Win32_ComputerSystem.Workgroup 
         $AD_Site_Name = "None"
-        $Domain_part_label.Visibility = "Collapsed"
-        $Domain_part_Infos.Visibility = "Collapsed"
-        $My_Site_Name.Visibility = "Collapsed"
+        if($null -eq $Domain_part_label) {
+            Write-Host "Error: `$Domain_part_label not found!" -BackgroundColor Black -ForegroundColor Red
+        } else {
+            $Domain_part_label.Visibility = "Collapsed"
+        }
+        if($null -eq $Domain_part_Infos) {
+            Write-Host "Error: `$Domain_part_Infos not found!" -BackgroundColor Black -ForegroundColor Red
+        } else {
+            $Domain_part_Infos.Visibility = "Collapsed"
+        }
+        if($null -eq $My_Site_Name) {
+            Write-Host "Error: `$My_Site_Name not found!" -BackgroundColor Black -ForegroundColor Red
+        } else {
+            $My_Site_Name.Visibility = "Collapsed"
+        }
     }
 
     # Get network infos
@@ -504,25 +448,30 @@ function Get_Details_Infos {
     $Wifi_Card.Content = $Wifi_Cards
 
 }
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# INFORMATIONS FROM DETAILS PART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
 
+#########################################################################
+#                        INFORMATIONS FROM DETAILS PART                 #
+#########################################################################
 
-
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# INFORMATIONS FROM OVERVIEWPART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
+#########################################################################
+#                        INFORMATIONS FROM OVERVIEWPART                 #
+#########################################################################
 
 function Get_Overview_Infos {
     $User = $env:USERPROFILE
     $ProgData = $env:PROGRAMDATA
-    $Win32_BIOS = Get-CimInstance Win32_BIOS 
-    $Win32_OperatingSystem = Get-CimInstance Win32_OperatingSystem 
+    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+        $Win32_BIOS = Get-CimInstance Win32_BIOS
+    }
+    else {
+        $Win32_BIOS = Get-WmiObject Win32_BIOS
+    }
+    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+        $Win32_OperatingSystem = Get-CimInstance Win32_OperatingSystem
+    }
+    else {
+        $Win32_OperatingSystem = Get-WmiObject Win32_OperatingSystem
+    }
     $Manufacturer = $Win32_ComputerSystem.Manufacturer
     $MTM = $Win32_ComputerSystem.Model
     $Serial_Number = $Win32_BIOS.SerialNumber
@@ -569,11 +518,9 @@ function Get_Overview_Infos {
     $Serial.Content = "Serial number: $Serial_Number"
 }
 
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# INFORMATIONS FROM OVERVIEWPART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
+#########################################################################
+#                        INFORMATIONS FROM OVERVIEWPART                 #
+#########################################################################
 
 Launch_modal_progress
 
@@ -582,7 +529,7 @@ $Win32_LogicalDisk = Get-ciminstance Win32_LogicalDisk | Where-Object { $_.Devic
 function Get_Disk_Infos {
     $Total_size = [Math]::Round(($Win32_LogicalDisk.size / 1GB), 1)
     $Free_size = [Math]::Round(($Win32_LogicalDisk.Freespace / 1GB), 1)
-    $Disk_information = $Disk_information + "(" + $Win32_LogicalDisk.deviceid + ")" + $Total_size + " GB (Total size)/ " + + $Free_size + " GB (Free space)`n"
+    $Disk_information = $Disk_information + "(" + $Win32_LogicalDisk.deviceid + ") " + $Total_size + " GB (Total size) / " + + $Free_size + " GB (Free space)`n"
     $My_Disk_Info.Content = $Disk_information
 
     if ($Free_size -lt 1) {
@@ -641,18 +588,16 @@ Get_Overview_Infos
 Get_Details_Infos
 Get_Disk_Infos
 
-# function Test-PendingReboot
-# {
-# if (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending" -EA Ignore){ return $true }
-# if (Get-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -EA Ignore){ return $true }
+# function Test-PendingReboot {
+# if (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending" -EA Ignore) { return $true }
+# if (Get-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -EA Ignore) { return $true }
 # try { 
 # $util = [wmiclass]"\\.\root\ccm\clientsdk:CCM_ClientUtilities"
 # $status = $util.DetermineIfRebootPending()
 # if(($status -ne $null)-and $status.RebootPending){
 # return $true
 # }
-# }catch{}
- 
+# } catch {}
 # return $false
 # }
 
@@ -682,11 +627,9 @@ if ($Search_Missing_Drivers -gt 0) {
 # $Pending_Reboot.Visibility = "Collapsed"
 # }
 
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# CREATE MONITOR PART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
+#########################################################################
+#                        CREATE MONITOR PART                            #
+#########################################################################
 
 # =================== StackPanel ======================================== 
 function Create-StackPanel { 
@@ -858,9 +801,9 @@ function Create_Monitor_Content {
         $StackPanelparent = [String]("StackPparent" + $Monitor.Serial)
         $StackforPartition = [String]("StackForPart" + $Monitor.Serial)
         $Borderdisk = [String]("BorderOf_" + $Monitor.Serial)
-        $StackforPartition = Create-StackPanel$StackforPartition "0,0,0,0" "Horizontal" "Center"
-        $StackPanelparent = Create-StackPanel$StackPanelparent "0,0,0,0" "Vertical" "Center"# inside the block
-        $Borderdisk = Create-Border $Borderdisk"10,30,0,0"
+        $StackforPartition = Create-StackPanel $StackforPartition "0,0,0,0" "Horizontal" "Center"
+        $StackPanelparent = Create-StackPanel $StackPanelparent "0,0,0,0" "Vertical" "Center"# inside the block
+        $Borderdisk = Create-Border $Borderdisk "10,30,0,0"
         $Borderdisk.BorderThickness = "0"
 
         #======================= disk_n ==================================
@@ -871,12 +814,12 @@ function Create_Monitor_Content {
         $Serial_LabelInfo = [String]("Monitor_" + $Monitor.Serial + "_size" )
         $StackPaneldisk = [String]("Monitor_" + $Monitor.Serial + "_stackP" )
 
-        $StackPaneldisk = Create-StackPanel$StackPaneldisk"0,0,0,0" "Vertical" "Center"
-        $DiskManagIco = Create-Image$Monitor_Pic "100,90" "5,5,0,0"
-        $Titre_Label = Create-Label$Titre_Label"5,0,0,0" #Disk Id
-        $Resolution_Label = Create-Label$ChildSizeInfo"5,0,0,0"
-        $Carte_Label = Create-Label$Carte_LabelInfo"5,0,0,0"
-        $Serial_Label = Create-Label$Serial_LabelInfo"5,0,0,0"
+        $StackPaneldisk = Create-StackPanel $StackPaneldisk "0,0,0,0" "Vertical" "Center"
+        $DiskManagIco = Create-Image $Monitor_Pic "100,90" "5,5,0,0"
+        $Titre_Label = Create-Label $Titre_Label "5,0,0,0" #Disk Id
+        $Resolution_Label = Create-Label $ChildSizeInfo "5,0,0,0"
+        $Carte_Label = Create-Label $Carte_LabelInfo "5,0,0,0"
+        $Serial_Label = Create-Label $Serial_LabelInfo "5,0,0,0"
 
         $DiskManagIco.Source = "$Current_Folder\images\monitor.png" 
         $Titre_Label.Content = $Monitor.Name
@@ -923,19 +866,13 @@ function Create_Monitor_Content {
     $MonitorList.Children.Add($StackPanelmain)
 }
 
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# CREATE MONITOR PART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
+#########################################################################
+#                        CREATE MONITOR PART                            #
+#########################################################################
 
-
-
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# CREATE STORAGE DISK PART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
+#########################################################################
+#                        CREATE STORAGE DISK PART                       #
+#########################################################################
 
 function Check_Folder_Size {
     param(
@@ -1134,16 +1071,13 @@ $Legend_Label_Free.Content = $Legend_FreeSpace
 
 $List_Large_Files.Add_MouseLeftButtonDown(
     {
-        start-process -WindowStyle hidden powershell.exe "$current_folder\Actions_scripts\List_Large_Files.ps1" 
-
+        Start-Process -WindowStyle Hidden powershell.exe "$current_folder\Actions_scripts\List_Large_Files.ps1" 
     }
 )
 
-###########################################################################################################################################
-#******************************************************************************************************************************************
-# CREATE STORAGE DISK PART 
-#******************************************************************************************************************************************
-###########################################################################################################################################
+#########################################################################
+#                        CREATE STORAGE DISK PART                       #
+#########################################################################
 
 Close_modal_progress
 
@@ -1188,7 +1122,6 @@ function Show_Chart_Stockage {
     $pieSeries.Title = $Legend_MyMusic
     $pieSeries.DataLabels = $true
     $DoughnutCollection.Add($pieSeries)
-
 
     $chartvalue4 = [LiveCharts.ChartValues[LiveCharts.Defaults.ObservableValue]]::new()
     $pieSeries = [LiveCharts.Wpf.PieSeries]::new()
@@ -1249,8 +1182,8 @@ $Display_Send_Logs = $Get_Support_Infos_Content.Config.Display_Send_Logs
 
 $Tool_Logo.Source = "$current_folder\images\$Overview_Logo"
 
-$Theme = [MahApps.Metro.ThemeManager]::DetectAppStyle($form)
-[MahApps.Metro.ThemeManager]::ChangeAppStyle($form, [MahApps.Metro.ThemeManager]::GetAccent("$Main_Color"), $Theme.Item1);
+$Theme = [MahApps.Metro.ThemeManager]::DetectAppStyle($Window)
+[MahApps.Metro.ThemeManager]::ChangeAppStyle($Window, [MahApps.Metro.ThemeManager]::GetAccent("$Main_Color"), $Theme.Item1);
 
 $Website.Add_PreviewMouseDown(
     {
@@ -1280,11 +1213,17 @@ $Yammer.Add_PreviewMouseDown(
     }
 )
 
-$Send_Logs.Add_PreviewMouseDown(
-    {
-        [system.Diagnostics.Process]::start("https://www.example.com")
-    }
-)
+# TODO: Look at XAML. SendLogs not ava.?
+if ($null -eq $Send_Logs) {
+    Write-Host "Error: `$Send_Logs not found!" -BackgroundColor Black -ForegroundColor Red
+}
+else {
+    $Send_Logs.Add_PreviewMouseDown(
+        {
+            [system.Diagnostics.Process]::start("https://www.example.com")
+        }
+    )
+}
 
 if ($Website_Link -ne "") {
     $Website_Block.Visibility = "Visible"
@@ -1321,4 +1260,4 @@ else {
     $Issue_Block.Margin = "20,10,0,0"
 }
 
-$Form.ShowDialog() | Out-Null
+$Window.ShowDialog() | Out-Null

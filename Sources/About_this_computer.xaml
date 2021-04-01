@@ -140,7 +140,7 @@ GlowBrush="{DynamicResource AccentColorBrush}"
 	<Controls:MetroWindow.RightWindowCommands>
 		<Controls:WindowCommands>
 		   <Button x:Name="refresh_monitor" >
-				<iconPacks:PackIconOcticons Kind="devicedesktop" Margin="0,5,0,0" ToolTip="Rafraichir l'affichage des écrans"/>													
+				<iconPacks:PackIconOcticons Kind="devicedesktop" Margin="0,5,0,0" ToolTip="Refresh the display of the screens"/>													
 			</Button>	
 		
 		   <!-- <Button x:Name="MonBouton" > -->
@@ -201,7 +201,7 @@ GlowBrush="{DynamicResource AccentColorBrush}"
 								</StackPanel>
 							</StackPanel>	
 								<StackPanel Name="Reboot_Alert_Block" HorizontalAlignment="Center" Margin="0,20,0,0">
-									<Label FontWeight="Bold" Foreground="yellow" Name="IsRebootRequired" Content="Une mise à jour requiert un redémarrage !!!"  FontSize="14"/>									
+									<Label FontWeight="Bold" Foreground="yellow" Name="IsRebootRequired" Content="An update requires a reboot!!!" FontSize="14"/>
 								</StackPanel>								
 						</StackPanel>	
 						
