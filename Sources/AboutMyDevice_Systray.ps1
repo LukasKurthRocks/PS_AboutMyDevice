@@ -7,7 +7,7 @@ $Global:Current_Folder = Split-Path $MyInvocation.MyCommand.Path
 [System.Reflection.Assembly]::LoadWithPartialName('WindowsFormsIntegration') | Out-Null
 [System.Reflection.Assembly]::LoadFrom("$Current_Folder\assembly\MahApps.Metro.dll") | Out-Null
 
-$Log_File = $env:TEMP + "about_this_comp.log"
+$Log_File = "$env:TEMP\about_this_comp.log"
 
 function Write_Log {
 	param(
