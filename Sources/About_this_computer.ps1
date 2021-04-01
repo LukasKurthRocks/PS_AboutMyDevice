@@ -54,7 +54,8 @@ try {
             if ($XAML.MetroWindow.GetAttribute($Attrib)) {
                 $XAML.MetroWindow.RemoveAttribute($Attrib)
             }
-        } else {
+        }
+        else {
             Write-Host "We do not have a MetroWindow property"
             return
         }
@@ -62,7 +63,8 @@ try {
 
     $Reader = (New-Object System.Xml.XmlNodeReader $XAML)
     $Window = [Windows.Markup.XamlReader]::Load($Reader)
-} catch {
+}
+catch {
     Write-Host "Error declaring GUI: $($_.Exception.Message)" -ForegroundColor Red
     #$_
     return
@@ -72,7 +74,8 @@ try {
 $XAML.SelectNodes("//*") | ForEach-Object {
     try {
         Set-Variable -Name ($_.Name) -Value $Window.FindName($_.Name) -Scope Script
-    } catch {
+    }
+    catch {
         Write-Host "$($_.Exception.Message)" -ForegroundColor Red
     }
 }
@@ -85,7 +88,8 @@ $XAML.SelectNodes("//*") | ForEach-Object {
 $XAML.SelectNodes("//*") | ForEach-Object {
     try {
         Set-Variable -Name ($_.Name) -Value $Window.FindName($_.Name) -Scope Script
-    } catch {
+    }
+    catch {
         Write-Host "$($_.Exception.Message)" -ForegroundColor Red
     }
 }
@@ -283,19 +287,22 @@ function Get_Details_Infos {
         $Domain_WKG_Label.Content = "Workgroup name :"
         $Domain_test = $Win32_ComputerSystem.Workgroup 
         $AD_Site_Name = "None"
-        if($null -eq $Domain_part_label) {
+        if ($null -eq $Domain_part_label) {
             Write-Host "Error: `$Domain_part_label not found!" -BackgroundColor Black -ForegroundColor Red
-        } else {
+        }
+        else {
             $Domain_part_label.Visibility = "Collapsed"
         }
-        if($null -eq $Domain_part_Infos) {
+        if ($null -eq $Domain_part_Infos) {
             Write-Host "Error: `$Domain_part_Infos not found!" -BackgroundColor Black -ForegroundColor Red
-        } else {
+        }
+        else {
             $Domain_part_Infos.Visibility = "Collapsed"
         }
-        if($null -eq $My_Site_Name) {
+        if ($null -eq $My_Site_Name) {
             Write-Host "Error: `$My_Site_Name not found!" -BackgroundColor Black -ForegroundColor Red
-        } else {
+        }
+        else {
             $My_Site_Name.Visibility = "Collapsed"
         }
     }
@@ -879,7 +886,7 @@ function Check_Folder_Size {
         $Folder_Path
     )
 
-    if (test-path $Folder_Path) {
+    if (Test-Path $Folder_Path) {
         try {
             $Get_Folder_Size = (Get-ChildItem $Folder_Path -Recurse -File -ErrorAction SilentlyContinue -ErrorVariable err | Measure-Object -Property Length -Sum).Sum
         }
@@ -899,24 +906,24 @@ function Check_Folder_Size {
             $folderSizeOutput = "$("{0:N2}" -f $Get_Folder_Size)B" 
         }
         elseif ( $Get_Folder_Size -lt 1MB ) { 
-            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1KB))KB" 
+            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1KB)) KB" 
         }
         elseif ( $Get_Folder_Size -lt 1GB ) { 
-            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1MB))MB" 
+            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1MB)) MB" 
         }
         elseif ( $Get_Folder_Size -lt 1TB ) { 
-            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1GB))GB" 
+            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1GB)) GB" 
         }
         elseif ( $Get_Folder_Size -lt 1PB ) { 
-            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1TB))TB" 
+            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1TB)) TB" 
         }
         elseif ( $Get_Folder_Size -ge 1PB ) { 
-            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1PB))PB" 
+            $folderSizeOutput = "$("{0:N2}" -f ($Get_Folder_Size / 1PB)) PB" 
         }
 
         $Global:Full_Folder_Size = New-Object -TypeName psobject
         $Full_Folder_Size | Add-Member -MemberType NoteProperty -Name Size_Formated -Value $folderSizeOutput
-        $Full_Folder_Size | Add-Member -MemberType NoteProperty -Name Size_Normal-Value $Get_Folder_Size
+        $Full_Folder_Size | Add-Member -MemberType NoteProperty -Name Size_Normal -Value $Get_Folder_Size
     }
     else {
         Write-Host "Can not find the folder $Folder_Path"
@@ -959,8 +966,10 @@ $Free_Space = $Win32_LogicalDisk.FreeSpace
 
 $Free_Space_Formated = "$("{0:N2}" -f ($Free_Space / 1GB))GB" 
 
+Write-Verbose "SizeTest: $documents_Size_Normal / $Total_size_full * 100" -Verbose
 [int]$Doc_Used_Size = '{0:N0}' -f (($documents_Size_Normal / $Total_size_full * 100), 1)
 [int]$download_Used_Size = '{0:N0}' -f (($download_size_Normal / $Total_size_full * 100), 1)
+[int]$music_Used_Size = '{0:N0}' -f (($music_size_Normal / $Total_size_full * 100), 1)
 [int]$desktop_Used_Size = '{0:N0}' -f (($desktop_size_Normal / $Total_size_full * 100), 1)
 [int]$Free_Space_Used_Size = '{0:N0}' -f (($Free_Space / $Total_size_full * 100), 1)
 
@@ -970,7 +979,7 @@ $Main_bar_Value = $Doc_Used_Size + $Free_Space_Used_Size + $desktop_Used_Size + 
 $value_to_mulitply = 500 / $Main_bar_Value
 
 $MyDocs.Width = $Doc_Used_Size * $value_to_mulitply
-$Label_Docs = new-object system.windows.controls.label
+$Label_Docs = New-Object system.windows.controls.label
 $Label_Docs.Content = $Doc_Used_Size 
 $Label_Docs.Foreground = "white"
 $Label_Docs.HorizontalAlignment = "center"
@@ -979,7 +988,7 @@ $MyDocs.Children.Add($Label_Docs)
 $MyDocs.Background = "#2195F2"
 
 $Downloads.Width = $download_Used_Size * $value_to_mulitply
-$Label_Download = new-object system.windows.controls.label
+$Label_Download = New-Object system.windows.controls.label
 $Label_Download.Content = $download_Used_Size 
 $Label_Download.Foreground = "white"
 $Label_Download.HorizontalAlignment = "center"
@@ -1090,6 +1099,7 @@ $refresh_monitor.Add_Click(
 )
 
 function Show_Chart_Stockage {
+    Write-Verbose "Test: Pie" -Verbose
     $DoughnutCollection = [LiveCharts.SeriesCollection]::new()
 
     $chartvalue1 = [LiveCharts.ChartValues[LiveCharts.Defaults.ObservableValue]]::new()
@@ -1102,6 +1112,7 @@ function Show_Chart_Stockage {
     $pieSeries.Title = $Legend_MyDocuments
     $pieSeries.DataLabels = $true
     $DoughnutCollection.Add($pieSeries)
+    Write-Verbose "PIE/CHART1: $chartvalue1, Legend: $Legend_MyDocuments, DocsUsed: $Doc_Used_Size"
     
     $chartvalue2 = [LiveCharts.ChartValues[LiveCharts.Defaults.ObservableValue]]::new()
     $pieSeries = [LiveCharts.Wpf.PieSeries]::new()
@@ -1112,6 +1123,7 @@ function Show_Chart_Stockage {
     $pieSeries.Title = $Legend_MyDesktop
     $pieSeries.DataLabels = $true
     $DoughnutCollection.Add($pieSeries)
+    Write-Verbose "PIE/CHART2: $chartvalue2, Legend: $Legend_MyDesktop, DesktopUsed: $desktop_Used_Size"
 
     $chartvalue3 = [LiveCharts.ChartValues[LiveCharts.Defaults.ObservableValue]]::new()
     $pieSeries = [LiveCharts.Wpf.PieSeries]::new()
@@ -1122,6 +1134,7 @@ function Show_Chart_Stockage {
     $pieSeries.Title = $Legend_MyMusic
     $pieSeries.DataLabels = $true
     $DoughnutCollection.Add($pieSeries)
+    Write-Verbose "PIE/CHART3: $chartvalue3, Legend: $Legend_MyMusic, MusicUsed: $music_Used_Size"
 
     $chartvalue4 = [LiveCharts.ChartValues[LiveCharts.Defaults.ObservableValue]]::new()
     $pieSeries = [LiveCharts.Wpf.PieSeries]::new()
@@ -1132,6 +1145,7 @@ function Show_Chart_Stockage {
     $pieSeries.Title = $Legend_Download
     $pieSeries.DataLabels = $true
     $DoughnutCollection.Add($pieSeries)
+    Write-Verbose "PIE/CHART4: $chartvalue3, Legend: $Legend_Download, DownloadUsed: $download_Used_Size"
 
     $chartvalue5 = [LiveCharts.ChartValues[LiveCharts.Defaults.ObservableValue]]::new()
     $pieSeries = [LiveCharts.Wpf.PieSeries]::new()
@@ -1142,6 +1156,7 @@ function Show_Chart_Stockage {
     $pieSeries.Title = $Legend_FreeSpace
     $pieSeries.DataLabels = $true
     $DoughnutCollection.Add($pieSeries)
+    Write-Verbose "PIE/CHART5: $chartvalue5, Legend: $Legend_FreeSpace, FreeUsed: $Free_Space_Used_Size"
 
     $Doughnut.Series = $DoughnutCollection
 }
@@ -1246,18 +1261,19 @@ else {
     $Chat_Block.Visibility = "Collapsed"
 }
 
-if (($Chat_Link -eq "") -and ($Yammer_Link -eq "")) {
+if (($Chat_Link -eq "") -and ($Yammer_Link -eq "") -and ($Website_Link -eq "")) {
+    $Issue_Block.Margin = "20,80,0,0"
+}
+elseif (($Chat_Link -eq "") -and ($Yammer_Link -eq "")) {
     $Issue_Block.Margin = "20,50,0,0"
 }
 else {
     $Issue_Block.Margin = "20,10,0,0"
 }
 
-if (($Chat_Link -eq "") -and ($Yammer_Link -eq "") -and ($Website_Link -eq "")) {
-    $Issue_Block.Margin = "20,80,0,0"
+if ($Window.ShowDialog()) {
+    Write-Host "Successfully processed dialog."
 }
 else {
-    $Issue_Block.Margin = "20,10,0,0"
+    Write-Host "Window/Dialog not processed successfully."
 }
-
-$Window.ShowDialog() | Out-Null
