@@ -1,40 +1,32 @@
-﻿$ProgData = $env:PROGRAMDATA
-$Current_Folder = split-path $MyInvocation.MyCommand.Path
-$AboutMyDevice_Folder = $env:programdata + "\SD_AboutMyDevice"
-$SystemRoot = $env:SystemRoot
-$Debug_Folder = "$SystemRoot\Debug"
-$Log_File = "$Debug_Folder\GRT_AboutMyDevice.log"
-$ServiceName = "About my device"
+﻿$AboutMyDevice_Folder = $env:ProgramData + "\SD_AboutMyDevice"
+$Log_File = "$env:SystemRoot\Debug\GRT_AboutMyDevice.log"
+$ServiceName = "About My Device"
 
-Function Write_Log
-	{
-		param(
-		$Message_Type,	
+function Write_Log {
+	param(
+		$Message_Type,
 		$Message
-		)
-		
-		$MyDate = "[{0:MM/dd/yy} {0:HH:mm:ss}]" -f (Get-Date)		
-		Add-Content $Log_File  "$MyDate - $Message_Type : $Message"			
-		write-host  "$MyDate - $Message_Type : $Message"		
-	}
+	)
 
-									
-Add-content $Log_File ""	
+	$MyDate = "[{0:MM/dd/yy} {0:HH:mm:ss}]" -f (Get-Date)
+	Add-Content $Log_File "$MyDate - $Message_Type : $Message"
+	Write-Host "$MyDate - $Message_Type : $Message"
+}
 
-$OD_Process_Status = (gwmi win32_process | Where {$_.commandline -like "*AboutMydevice_Systray*"})				
-$OD_Process_Status2 = get-process | where {$_.MainWindowTitle -like "*About my device*"}				
-If($OD_Process_Status -ne $null)
-	{
-		$OD_Process_Status.Terminate()
-	}
+Add-Content $Log_File ""
 
-If($OD_Process_Status2 -ne $null)
-	{
-		$OD_Process_Status2 | kill -Force					
-	}	
+$OD_Process_Status = (gwmi win32_process | Where-Object { $_.commandline -like "*AboutMydevice_Systray*" })
+$OD_Process_Status2 = get-process | Where-Object { $_.MainWindowTitle -like "*About my device*" }
+if ($null -ne $OD_Process_Status) {
+	$OD_Process_Status.Terminate()
+}
 
-$Script:Local_Path_NSSM = "$AboutMyDevice_Folder\nssm.exe"	
+if ($null -ne $OD_Process_Status2) {
+	$OD_Process_Status2 | Stop-Process -Force
+}
+
+$Script:Local_Path_NSSM = "$AboutMyDevice_Folder\nssm.exe"
 $Local_Path_NSSM = "$AboutMyDevice_Folder\nssm.exe"
-Get-Service $ServiceName | stop-service
-& $Local_Path_NSSM remove $ServiceName confirm	
-If(test-path $AboutMyDevice_Folder){Remove-item $AboutMyDevice_Folder -Recurse -Force}
+Get-Service $ServiceName | Stop-Service
+& $Local_Path_NSSM remove $ServiceName confirm
+if (Test-Path $AboutMyDevice_Folder) { Remove-Item $AboutMyDevice_Folder -Recurse -Force }

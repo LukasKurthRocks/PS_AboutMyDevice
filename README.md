@@ -1,7 +1,10 @@
 # About my device
-In this post, I will show you a quick systray tool allowing user to get some informations about the device and run some quick actions
+Original: [github/damienvanrobaeys/About_my_device](https://github.com/damienvanrobaeys/About_my_device/)
 
-![alt text](https://github.com/damienvanrobaeys/About_my_device/blob/main/preview.gif)
+Ich möchte den Code so umstellen, dass er für mich am besten wartbar ist und ich ihn für die Arbeit verwenden lann.\
+Erster Schritt: Get-WMI* ist veraltet und sollte durch Get-CIM* ausgetauscht werden. Mal schauen ob es dann auch unter PowerShell 7 läuft.
 
-> *View the full blog post here*
-http://www.systanddeploy.com/2020/02/ps1-to-exe-generator-create-exe-for.html
+## TODO
+- [ ] WMI* durch CIM* tauschen
+- [ ] PowerShell v7 testen
+- [ ] Mirror für spezifische Arbeitsdaten

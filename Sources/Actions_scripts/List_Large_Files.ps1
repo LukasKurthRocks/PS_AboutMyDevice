@@ -1,3 +1,3 @@
-$Get_Large_Files = gci c:\ -recurse  -ea silentlycontinue | sort -descending -property length | select -first 10 name, length, fullname
-$Get_Large_Files | out-file "$env:temp\Large_Files.txt"
-invoke-item "$env:temp\Large_Files.txt"
+$Get_Large_Files = Get-ChildItem C:\ -Recurse -ErrorAction SilentlyContinue | Sort-Object -Descending -Property Length | Select-Object -First 10 Name, Length, FullName
+$Get_Large_Files | Out-File "$env:Temp\Large_Files.txt"
+Invoke-Item "$env:Temp\Large_Files.txt"

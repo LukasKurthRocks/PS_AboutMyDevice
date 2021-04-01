@@ -21,10 +21,11 @@ function Invoke-AsCurrentUser {
             # Use the same PowerShell executable as the one that invoked the function
             $pwshPath = (Get-Process -Id $pid).Path
             if ($NoWait) { $ProcWaitTime = 1 } else { $ProcWaitTime = -1 }
-           [RunAsUser.ProcessExtensions]::StartProcessAsCurrentUser(
+            [RunAsUser.ProcessExtensions]::StartProcessAsCurrentUser(
                 $pwshPath, "`"$pwshPath`" -ExecutionPolicy Bypass -Window Normal -EncodedCommand $($encodedcommand)",
-                (Split-Path $pwshPath -Parent), $false,$ProcWaitTime)
-        } catch {
+                (Split-Path $pwshPath -Parent), $false, $ProcWaitTime)
+        }
+        catch {
             Write-Error -Message "Could not execute as currently logged on user: $($_.Exception.Message)" -Exception $_.Exception
             return
         }

@@ -446,8 +446,4 @@ GlowBrush="{DynamicResource AccentColorBrush}"
 		</StackPanel>		
 		
     </Grid>
-</Controls:MetroWindow>        
-   
-    
-    
-    
+</Controls:MetroWindow>
