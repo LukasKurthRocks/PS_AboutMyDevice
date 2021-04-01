@@ -422,6 +422,17 @@ function Get_Details_Infos {
             "397328" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Enabled" }
             "397584" { $AVDefStatus = "Out of date" ; $AVRTStatus = "Enabled" }
             default { $AVDefStatus = "Unknown" ; $AVRTStatus = "Unknown" }
+
+            # FOUND ONLINE
+            "401664" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Enabled" } # Enabled: True ; Scanning: False; Outdated: False
+            "397568" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Enabled" } # Enabled: True ; Scanning: True ; Outdated: False
+            "393472" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Enabled" } # Enabled: True ; Scanning: False; Outdated: False
+            
+            # CUSTOM EXPERIENCE
+            "270336" { $AVDefStatus = "Up to date" ; $AVRTStatus = "Disabled" } # ProductState 270336 nicht aktiv, aktuell 
+            
+            # MISSING
+            # 327680, 327696, 331776, 344064, 458752, 458768, 462848, 462864
         }
     
         if ($AVRTStatus -eq "Disabled" -and $AVDefStatus -eq "Out of date") {
@@ -434,6 +445,12 @@ function Get_Details_Infos {
             # Enabled and Out Of Date
             $antivirus_Status_Label.Content = "Antivirus enabled, but out of date"
             $antivirus_Status_Label.Foreground = "yellow"
+            $antivirus_Status_Label.Fontweight = "bold"
+        }
+        elseif ($AVRTStatus -eq "Unknown" -and $AVDefStatus -eq "Unknown") {
+            # Enabled and Out Of Date
+            $antivirus_Status_Label.Content = "Antivirus status is: $($CurrentAntivirusSolution.productState) (Unknown productState)"
+            $antivirus_Status_Label.Foreground = "red"
             $antivirus_Status_Label.Fontweight = "bold"
         }
         else {
