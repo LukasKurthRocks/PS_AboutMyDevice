@@ -183,14 +183,14 @@ Set-Location $current_folder
 $Systray_Tool_Icon.Add_Click(
 	{
 		if ($_.Button -eq [Windows.Forms.MouseButtons]::Left) {
-			powershell -sta .\About_this_computer.ps1 
+			powershell -sta "$Current_Folder\About_this_computer.ps1"
 		}
 	}
 )
 
 $Run_Tool.Add_Click(
 	{
-		powershell -sta .\About_this_computer.ps1
+		powershell -sta "$Current_Folder\About_this_computer.ps1"
 	}
 )
 
