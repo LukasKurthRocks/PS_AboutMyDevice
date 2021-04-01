@@ -15,12 +15,12 @@ function Write_Log {
 		$Message
 	)
  
-	$MyDate = "[{0:MM/dd/yy} {0:HH:mm:ss}]" -f (Get-Date) 
+	$MyDate = "[{0:MM/dd/yy}{0:HH:mm:ss}]" -f (Get-Date)
 	Add-Content $Log_File "$MyDate - $Message_Type : $Message" 
 	Write-Host "$MyDate - $Message_Type : $Message" 
 }
  
-if (!(Test-Path $Log_File)) { new-item $Log_File -Type File -force } 
+if (!(Test-Path $Log_File)) { new-item $Log_File -Type File -force }
 $Global:Current_Folder = split-path $MyInvocation.MyCommand.Path
 
 #$AboutMyDevice_Folder = "$env:ProgramData\SD_AboutMyDevice" # Unused
@@ -36,7 +36,7 @@ $Systray_Tool_Icon.Icon = "$Systray_Pictures\help2.ico"
 $Systray_Tool_Icon.Visible = $true
 
 $Get_Support_Infos_Content = [xml](get-content "$current_folder\Config\Main_Config.xml")
-$Main_Language = $Get_Support_Infos_Content.Config.Main_Language
+#$Main_Language = $Get_Support_Infos_Content.Config.Main_Language
 $Display_Send_Logs = $Get_Support_Infos_Content.Config.Display_Send_Logs
 $Display_Quick_Assist = $Get_Support_Infos_Content.Config.Display_Quick_Assist
 $Display_Open_CompanyPortal = $Get_Support_Infos_Content.Config.Display_Open_CompanyPortal
@@ -60,7 +60,7 @@ if ($Display_Quick_Assist -eq "True") {
 		{
 			& "$env:SystemRoot\system32\quickassist.exe"
 		}
-	) 
+	)
 }
 
 $CompanyPortal_SoftwareCenter_Preference = $Get_Support_Infos_Content.Config.CompanyPortal_SoftwareCenter_Preference
@@ -76,7 +76,7 @@ if ($Display_Open_CompanyPortal -eq "True") {
 				$Get_Appli_Name = (Get-AppxPackage -name Microsoft.CompanyPortal).PackageFamilyName
 				explorer.exe shell:appsFolder\$Get_Appli_Name!App
 			}
-		) 
+		)
 	}
 	elseif ($CompanyPortal_SoftwareCenter_Preference -eq "SoftwareCenter") {
 		$Run_Portal = $contextmenu.Items.Add("Open Software Center");
@@ -90,7 +90,7 @@ if ($Display_Open_CompanyPortal -eq "True") {
 				}
 			}
 		)
-	} 
+	}
 }
 
 if ($Display_Sync -eq "True") {
@@ -103,21 +103,27 @@ if ($Display_Sync -eq "True") {
 			$Check_Intune_Service = Get-Service intunemanagementextension -ErrorAction SilentlyContinue
 			if ($Check_Intune_Service -ne $null) {
 				$Shell = New-Object -ComObject Shell.Application
-				$Shell.open("intunemanagementextension://syncapp") 
+				$Shell.open("intunemanagementextension://syncapp")
 			}
-
-			$Get_MECM_Client_Version = (Get-WMIObject -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
+			
+			if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+				$Get_MECM_Client_Version = (Get-CimInstance -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
+			}
+			else {
+				$Get_MECM_Client_Version = (Get-WMIObject -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
+			}
+			
 			if ($Get_MECM_Client_Version -ne $null) {
-				$Client_Actions = @("8EF4D77C", "3A88A2F3") 
+				$Client_Actions = @("8EF4D77C", "3A88A2F3")
 				$Config_Manager_Object = New-Object -ComObject CPApplet.CPAppletMgr
 				foreach ($Action in $Client_Actions) {
-					$action_To_Run = $Config_Manager_Object.GetClientActions() | Where-Object { ($_.ActionID -like "*$Action*") } 
+					$action_To_Run = $Config_Manager_Object.GetClientActions() | Where-Object { ($_.ActionID -like "*$Action*") }
 					$action_To_Run.PerformAction()
 				}
 			}
 		}
 	)
-} 
+}
 
 if ($Display_Send_Logs -eq "True") {
 	$Menu_Logs = $contextmenu.Items.Add("Send device logs to support team");
@@ -135,7 +141,7 @@ if ($Display_Send_Logs -eq "True") {
 				if (($Sharepoint_Folder -ne $null) -and ($Sharepoint_App_ID -ne $null) -and ($Sharepoint_App_Secret -ne $null) -and ($Sharepoint_Site_URL -ne $null)) {
 					powershell "$current_folder\Actions_scripts\Collect_Logs.ps1"
 					powershell "$current_folder\Actions_scripts\Upload_Logs_Sharepoint.ps1" 
-				} 
+				}
 			}
 			elseif ($Send_Logs_Method -eq "Mail") {
 				if ($Support_Mail -ne $null) {
@@ -156,14 +162,14 @@ if ($Display_Send_Logs -eq "True") {
 					$Mail.Subject = $Subject 
 					$Mail.Body = $Body
 					$Mail.Send()
-					$Outlook.Quit() 
+					$Outlook.Quit()
 					[System.Runtime.Interopservices.Marshal]::ReleaseComObject($Outlook) | Out-Null
 
 					# remove-item $Logs_Collect_Folder -Force -Recurse
 					# remove-item $Logs_Collect_Folder_ZIP -Force
 				}
 			}
-		}) 
+		})
 }
 
 $Menu_Exit = $contextmenu.Items.Add("Exit");
@@ -172,14 +178,13 @@ $Menu_Exit.Image = $Menu_Exit_Img
 
 $Systray_Tool_Icon.ContextMenuStrip = $contextmenu;
 
-
 Set-Location $current_folder
 
 $Systray_Tool_Icon.Add_Click(
 	{
 		if ($_.Button -eq [Windows.Forms.MouseButtons]::Left) {
 			powershell -sta .\About_this_computer.ps1 
-		} 
+		}
 	}
 )
 
@@ -188,7 +193,6 @@ $Run_Tool.Add_Click(
 		powershell -sta .\About_this_computer.ps1
 	}
 )
-
 
 # When Exit is clicked, close everything and kill the PowerShell process
 $Menu_Exit.add_Click(

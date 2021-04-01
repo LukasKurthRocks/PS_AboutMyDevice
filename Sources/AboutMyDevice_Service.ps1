@@ -1,6 +1,4 @@
-﻿
-#$ProgData = $env:PROGRAMDATA
-#$Current_Folder = split-path $MyInvocation.MyCommand.Path
+﻿#$Current_Folder = split-path $MyInvocation.MyCommand.Path
 $AboutMyDevice_Folder = "$env:PROGRAMDATA\SD_AboutMyDevice"
 $Log_File = "$AboutMyDevice_Folder\GRT_AboutMyDevice.log"
 

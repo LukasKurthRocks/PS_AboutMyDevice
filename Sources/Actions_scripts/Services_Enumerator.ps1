@@ -7,8 +7,12 @@ $CSS_File = "$env:PROGRAMDATA\OEM_Support\Actions_Scripts\HTML_Export_CSS.css" #
 
 $Title = "<p><span class=titre_list>Drivers list on $env:COMPUTERNAME</span><br><span class=subtitle>This document has been updated on $Date</span></p><br>"
 
-$services_list_b = Get-wmiobject win32_service |
-Select-Object Name, Caption, State, Startmode | ConvertTo-HTML -Fragment
+if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+	$services_list_b = Get-CimInstance Win32_Service | Select-Object Name, Caption, State, Startmode | ConvertTo-HTML -Fragment
+}
+else {
+	$services_list_b = Get-WmiObject Win32_Service | Select-Object Name, Caption, State, Startmode | ConvertTo-HTML -Fragment
+}
 
 $colorTagTable = @{
 	Stopped = ' class="stopped">Stopped<'

@@ -15,8 +15,13 @@ function Write_Log {
 
 Add-Content $Log_File ""
 
-$OD_Process_Status = (gwmi win32_process | Where-Object { $_.commandline -like "*AboutMydevice_Systray*" })
-$OD_Process_Status2 = get-process | Where-Object { $_.MainWindowTitle -like "*About my device*" }
+if(Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+	$OD_Process_Status = (Get-CimInstance Win32_Process | Where-Object { $_.commandline -like "*AboutMydevice_Systray*" })
+} else {
+	$OD_Process_Status = (Get-WmiObject Win32_Process | Where-Object { $_.commandline -like "*AboutMydevice_Systray*" })
+}
+
+$OD_Process_Status2 = Get-Process | Where-Object { $_.MainWindowTitle -like "*About My Device*" }
 if ($null -ne $OD_Process_Status) {
 	$OD_Process_Status.Terminate()
 }

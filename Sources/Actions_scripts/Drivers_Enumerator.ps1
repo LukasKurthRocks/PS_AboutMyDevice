@@ -10,8 +10,14 @@ $CSS_File = "$env:PROGRAMDATA\OEM_Support\Actions_Scripts\HTML_Export_CSS.css" #
 
 $Title = "<p><span class=titre_list>Drivers list on $env:COMPUTERNAME</span><br><span class=subtitle>This document has been updated on $Date</span></p><br>"
 
-$Drivers_list_b = Get-WmiObject Win32_PnPSignedDriver | Select-Object devicename, manufacturer, driverversion, infname, IsSigned |
-Where-Object { $_.devicename -ne $null -and $_.infname -ne $null } | Sort-Object devicename -Unique | ConvertTo-HTML -Fragment
+if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+    $Drivers_list_b = Get-CimInstance Win32_PnPSignedDriver | Select-Object devicename, manufacturer, driverversion, infname, IsSigned |
+    Where-Object { $_.devicename -ne $null -and $_.infname -ne $null } | Sort-Object devicename -Unique | ConvertTo-HTML -Fragment
+}
+else {
+    $Drivers_list_b = Get-WmiObject Win32_PnPSignedDriver | Select-Object devicename, manufacturer, driverversion, infname, IsSigned |
+    Where-Object { $_.devicename -ne $null -and $_.infname -ne $null } | Sort-Object devicename -Unique | ConvertTo-HTML -Fragment
+}
 
 $Drivers_list = $Drivers_list + $Drivers_list_b
 
