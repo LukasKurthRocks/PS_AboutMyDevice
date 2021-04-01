@@ -130,7 +130,8 @@ if ($Display_Send_Logs -eq "True") {
 	$Menu_Logs_Img = [System.Drawing.Bitmap]::FromFile("$Systray_Pictures\log.png")
 	$Menu_Logs.Image = $Menu_Logs_Img
  
-	$Menu_Logs.Add_Click( {
+	$Menu_Logs.Add_Click(
+		{
 			if ($Send_Logs_Method -eq "Sharepoint") {
 				$Get_Sharepoint_Content = [xml](get-content "$current_folder\Config\Sharepoint.xml")
 				$Sharepoint_Folder = $Get_Sharepoint_Content.Infos.Folder
@@ -169,7 +170,19 @@ if ($Display_Send_Logs -eq "True") {
 					# remove-item $Logs_Collect_Folder_ZIP -Force
 				}
 			}
-		})
+		}
+	)
+}
+
+$currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+if ($currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+	$AdminMenu = $contextmenu.Items.Add("Admin");
+	$AdminMenu_Img = [System.Drawing.Bitmap]::FromFile("$Systray_Pictures\portal.png")
+	$AdminMenu.Image = $AdminMenu_Img
+} else {
+	$AdminMenu = $contextmenu.Items.Add("Admin (enter pw)");
+	$AdminMenu_Img = [System.Drawing.Bitmap]::FromFile("$Systray_Pictures\portal.png")
+	$AdminMenu.Image = $AdminMenu_Img
 }
 
 $Menu_Exit = $contextmenu.Items.Add("Exit");
