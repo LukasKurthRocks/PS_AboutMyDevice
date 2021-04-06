@@ -1,8 +1,8 @@
-﻿<Controls:MetroWindow x:Class="AboutMyDevice_Interface.AccentStyleWindow"
+﻿<controls:MetroWindow x:Class="AboutMyDevice_Interface.AccentStyleWindow"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
-                      xmlns:Converters="http://metro.mahapps.com/winfx/xaml/shared"
+                      xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:converters="http://metro.mahapps.com/winfx/xaml/shared"
                       xmlns:controlzex="urn:controlzex"
                       xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                       RenderOptions.ClearTypeHint="Enabled"
@@ -12,7 +12,7 @@
                       GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
                       ResizeMode="CanResizeWithGrip">
 
-    <Controls:MetroWindow.Resources>
+    <controls:MetroWindow.Resources>
         <ResourceDictionary>
 
             <ResourceDictionary.MergedDictionaries>
@@ -26,18 +26,18 @@
             </CollectionViewSource>
 
         </ResourceDictionary>
-    </Controls:MetroWindow.Resources>
+    </controls:MetroWindow.Resources>
 
-    <Controls:MetroWindow.TitleTemplate>
+    <controls:MetroWindow.TitleTemplate>
         <DataTemplate>
-            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Converter={Converters:ToUpperConverter}}"
+            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content, Converter={converters:ToUpperConverter}}"
                        TextTrimming="CharacterEllipsis"
                        VerticalAlignment="Center"
                        Margin="8 -1 0 0"
                        FontSize="{DynamicResource MahApps.Font.Size.Window.Title}"
                        FontFamily="{DynamicResource MahApps.Fonts.Family.Window.Title}" />
         </DataTemplate>
-    </Controls:MetroWindow.TitleTemplate>
+    </controls:MetroWindow.TitleTemplate>
 
     <Grid>
 
@@ -132,5 +132,4 @@
         </GroupBox>
 
     </Grid>
-
-</Controls:MetroWindow>
+</controls:MetroWindow>

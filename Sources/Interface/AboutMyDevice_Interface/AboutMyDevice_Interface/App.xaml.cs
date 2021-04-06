@@ -49,7 +49,7 @@ namespace AboutMyDevice_Interface {
             ThemeManager.Current.AddTheme(RuntimeThemeGenerator.Current.GenerateRuntimeTheme("Dark", Colors.Indigo));
             ThemeManager.Current.ChangeTheme(this, ThemeManager.Current.AddTheme(RuntimeThemeGenerator.Current.GenerateRuntimeTheme("Light", Colors.Indigo)));
 
-            ThemeManager.Current.ChangeTheme(this, "Light.Red");
+            ThemeManager.Current.ChangeTheme(this, "Dark.Red");
         }
     }
 }

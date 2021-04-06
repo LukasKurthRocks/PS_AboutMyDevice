@@ -26,14 +26,16 @@ namespace AboutMyDevice_Interface {
 
         public Password_AD() {
             InitializeComponent();
+
+            //ThemeManager.Current.ChangeTheme(this, "Dark.Red");
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
             _timer = new DispatcherTimer(TimeSpan.FromMilliseconds(200),
                 DispatcherPriority.Normal,
                 (o, args) => {
-                    this.theProgressBar.Value = DateTime.Now.Millisecond;
-                    theOtherProgressBar.Value = DateTime.Now.Millisecond;
+                    //this.theProgressBar.Value = DateTime.Now.Millisecond;
+                    //theOtherProgressBar.Value = DateTime.Now.Millisecond;
                 },
                 Dispatcher);
             _timer.Start();
