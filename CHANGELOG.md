@@ -13,5 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Changed WIM to CIM, well catually combined, but using CIM when available.
+- Virus Information in "Details"-Tab not working with external Tools. Is working now. Might still need some tweaks!!
+- Changed/Added WiFi "N/A" Status when there is no WiFi-Component installed (like my main machine)
 
 ### Removed

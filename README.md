@@ -14,3 +14,4 @@ Auswahl oder alle Addressen in Tooltip anzeigen? Eventuell mit Kartennamen!?
 - [ ] Fehlendes
   - [ ] Softwarecenter Starten?
   - [ ] Verschiedene Sprachen: Fr, De, En?
+- [ ] Monitore sind bei 3+ etwas verschoben!!
