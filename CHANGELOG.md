@@ -1,0 +1,17 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+### Added
+- New Interface with Visual Studio Project. Extending with PowerShell where needed. Basic C# is working, but i will mainly used this for PowerShell.
+- Passwort + Active Directory Admin Authentication (Authentication itself will be implemented via PowerShell)
+  - https://www.systanddeploy.com/2019/12/task-sequence-password-protect-gui-for.html
+  - https://github.com/damienvanrobaeys/TS_AD_Protect\
+
+### Changed
+- Changed WIM to CIM, well catually combined, but using CIM when available.
+
+### Removed
