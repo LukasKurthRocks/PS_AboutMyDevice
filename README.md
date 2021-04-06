@@ -8,6 +8,7 @@ Erster Schritt: Get-WMI* ist veraltet und sollte durch Get-CIM* ausgetauscht wer
 Auswahl oder alle Addressen in Tooltip anzeigen? Eventuell mit Kartennamen!?
 - [ ] Admin Menu (password if not admin) => Displaying Admin Stuff (bigger window?)
   - [ ] Replace ActiveDirectory with ADSearcher!?
+  - [ ] Bloatware und Konfigurations-Zeug? => WinRM, Remote, OneDrive, Cortana, PeopleBar => Siehe TaskSequence Zeug!?
 - [ ] PowerShell v7 testen
 - [ ] Mirror für eine Version die für die Arbeit abgestimmt ist
 - [ ] So wie ich das sehe, gibt es hier viel verschenktes Potential!
@@ -15,5 +16,6 @@ Auswahl oder alle Addressen in Tooltip anzeigen? Eventuell mit Kartennamen!?
   - [ ] Softwarecenter Starten?
   - [ ] Verschiedene Sprachen: Fr, De, En?
 - [ ] Monitore sind bei 3+ etwas verschoben!!
-- [ ] TeamViewer Status? (Läuft, Läuft nicht, Version, PW?)
+- [ ] TeamViewer Status? (Läuft, Läuft nicht, Version, PW?, ID?)
+  - [ ] Alternativ AnyDesk?
 - [ ] Sprachinformationen (System + User)
