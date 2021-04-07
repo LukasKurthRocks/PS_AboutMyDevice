@@ -214,48 +214,97 @@ function Close_modal_progress {
 # }
 # $Disk_information = $Disk_information.trim()
 
-if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-    $Win32_ComputerSystem = Get-CimInstance Win32_ComputerSystem
-}
-else {
-    $Win32_ComputerSystem = Get-WmiObject Win32_ComputerSystem
+# TODO: Remove
+#if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+#    $Win32_ComputerSystem = Get-CimInstance Win32_ComputerSystem
+#}
+#else {
+#    $Win32_ComputerSystem = Get-WmiObject Win32_ComputerSystem
+#}
+
+function Initialize-Variables {
+    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+        $Script:Win32_ComputerSystem = Get-CimInstance Win32_ComputerSystem
+        $Script:Win32_LogicalDisk = Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DeviceID -eq "C:" }
+        $Script:Get_MECM_Client_Version = (Get-CimInstance -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
+        $Script:Last_boot = Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime
+    }
+    else {
+        $Script:Win32_ComputerSystem = Get-WmiObject Win32_ComputerSystem
+        $Script:Win32_LogicalDisk = Get-WmiObject Win32_LogicalDisk | Where-Object { $_.DeviceID -eq "C:" }
+        $Script:Get_MECM_Client_Version = (Get-WmiObject -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
+        $Script:Last_boot = Get-WmiObject -Class Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime
+    }
 }
 
 #########################################################################
-#                        INFORMATIONS FROM DETAILS PART                 #
+#                        GATHERING FUNCTIONS                            #
 #########################################################################
 
-function Get_Details_Infos {
-    # Get printer infos
+# Helper Functions
+function Get-NetworkInfo {
+    [CmdLetBinding()]
+    param()
+    
+    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
+        $Win32_NetworkAdapterConfiguration = Get-CimInstance -class "Win32_NetworkAdapterConfiguration" | Where-Object { $_.IPEnabled -Match "True" }
+    }
+    else {
+        $Win32_NetworkAdapterConfiguration = Get-WmiObject -class "Win32_NetworkAdapterConfiguration" | Where-Object { $_.IPEnabled -Match "True" }
+    }
+
+    # Network Information
+    $indexDefault = Get-NetRoute -DestinationPrefix 0.0.0.0/0 | Sort-Object -Property RouteMetric | Select-Object -First 1 | Select-Object -ExpandProperty ifIndex
+    $local_ip = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $indexDefault | Select-Object -ExpandProperty IPAddress
+    $NetConfig = $Win32_NetworkAdapterConfiguration | Where-Object { $local_ip -in $_.IPAddress }
+    
+    # Public IP if found
+    try {
+        $PublicIP = (Resolve-DnsName -Name myip.opendns.com -Server resolver1.opendns.com).IPAddress
+    }
+    catch {}
+
+    if (!$PublicIP) {
+        $PublicIP = Invoke-RestMethod -Uri https://ifconfig.me/ip
+    }
+
+    return [PSCustomObject]@{
+        MAC      = $NetConfig.MACAddress
+        Subnet   = $NetConfig.IPsubnet[0]
+        IPv4     = $NetConfig.IPAddress | Where-Object { $_ -like '*.*.*.*' } | Select-Object -First 1
+        IPv6     = $NetConfig.IPAddress | Where-Object { $_ -notlike '*.*.*.*' } | Select-Object -First 1
+        IPPublic = $PublicIP
+    }
+}
+
+### INFORMATIONS FROM DETAILS PART
+function Get-DetailsTabInformation {
     if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
         $Win32_Printer = Get-CimInstance -Query " SELECT * FROM Win32_Printer WHERE Default=$true"
+        $Win32_BIOS = Get-CimInstance Win32_BIOS
+        $Win32_NetworkAdapterConfiguration = Get-CimInstance -class "Win32_NetworkAdapterConfiguration" | Where-Object { $_.IPEnabled -Match "True" }
+        #$Drivers_Test = Get-CimInstance Win32_PNPEntity | Where-Object {$_.ConfigManagerErrorCode -gt 0 }
+        $Get_Antivirus = Get-CimInstance -Namespace root/SecurityCenter2 -Class AntiVirusProduct
+        $Graphic_Card_info = (Get-CimInstance CIM_VideoController)
     }
     else {
         $Win32_Printer = Get-WmiObject -Query " SELECT * FROM Win32_Printer WHERE Default=$true"
-    }
-    $Printer.Content = $Win32_Printer.name
-
-    # Get BIOS infos
-    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-        $Win32_BIOS = Get-CimInstance Win32_BIOS
-    }
-    else {
         $Win32_BIOS = Get-WmiObject Win32_BIOS
+        $Win32_NetworkAdapterConfiguration = Get-WmiObject -Class "Win32_NetworkAdapterConfiguration" | Where-Object { $_.IPEnabled -Match "True" }
+        #$Drivers_Test = Get-WmiObject Win32_PNPEntity | Where-Object {$_.ConfigManagerErrorCode -gt 0 }
+        $Get_Antivirus = Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct
+        $Graphic_Card_info = Get-WmiObject -Class "Win32_VideoController"
     }
-    $BIOS_Version.Content = $Win32_BIOS.SMBIOSBIOSVersion
 
+    #$Default_printer = $Win32_Printer.name
+    $Printer.Content = $Win32_Printer.name
+    $BIOS_Version.Content = $Win32_BIOS.SMBIOSBIOSVersion
+    
     # Check drivers part
     $Check_Drivers_Block.Visibility = "Collapsed"
     $Missing_Drivers_Block.Visibility = "Collapsed"
 
-    # if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-    # $Drivers_Test = Get-CimInstance Win32_PNPEntity | Where-Object {$_.ConfigManagerErrorCode -gt 0 }
-    # }
-    # else {
-    # $Drivers_Test = Get-WmiObject Win32_PNPEntity | Where-Object {$_.ConfigManagerErrorCode -gt 0 }
-    # }
     # $Search_Missing_Drivers = ($Drivers_Test | Where-Object {$_.ConfigManagerErrorCode -eq 28}).Count
-
     # if ($Search_Missing_Drivers -gt 0) {
     # $Check_Drivers_Block.Visibility = "Visible"
     # $Missing_Drivers_Block.Visibility = "Visible"
@@ -266,14 +315,14 @@ function Get_Details_Infos {
     # $Missing_Drivers_Block.Visibility = "Collapsed"
     # $Check_Drivers_Block.Visibility = "Collapsed"
     # }
-
-    ################# Test if Domain or Network#################
+    
+    # Testing for domain or workgroup
     if (($Win32_ComputerSystem.partofdomain -eq $True)) {
         $Domain_WKG_Label.Content = "Domain:"
         $Domain_test = $env:USERDNSDOMAIN;
     }
     else {
-        $Domain_WKG_Label.Content = "Workgroup name :"
+        $Domain_WKG_Label.Content = "Workgroup:"
         $Domain_test = $Win32_ComputerSystem.Workgroup 
         $AD_Site_Name = "None"
         if ($null -eq $Domain_part_label) {
@@ -295,44 +344,22 @@ function Get_Details_Infos {
             $My_Site_Name.Visibility = "Collapsed"
         }
     }
-
-    # Get network infos
-    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-        $win32_networkadapterconfiguration = Get-CimInstance -class "Win32_NetworkAdapterConfiguration" | Where-Object { $_.IPEnabled -Match "True" }
-    }
-    else {
-        $win32_networkadapterconfiguration = Get-WmiObject -class "Win32_NetworkAdapterConfiguration" | Where-Object { $_.IPEnabled -Match "True" }
-    }
-    if ($null -eq $win32_networkadapterconfiguration) {
-        $My_IP.content = "Not connected"
-    }
-    else {
-        foreach ($obj in $win32_networkadapterconfiguration) {
-            $MAC_Address = $obj.MACAddress
-            $IP_Subnet = $obj.IPsubnet[0]
-            $IP_Address = $obj.IPAddress[0]
-        }
+    
+    # Network Configuration
+    if ($null -eq $Win32_NetworkAdapterConfiguration) {
+        $My_IP.Content = "Not connected"
     }
 
-    # Get default printer
-    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-        $Win32_Printer = Get-CimInstance -Query " SELECT * FROM Win32_Printer WHERE Default=$true"
-    }
-    else {
-        $Win32_Printer = Get-WmiObject -Query " SELECT * FROM Win32_Printer WHERE Default=$true"
-    }
-    $Default_printer = $Win32_Printer.name
-
-    # Get installed antivirus
-    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-        $Get_Antivirus = Get-CimInstance -Namespace root/SecurityCenter2 -Class AntiVirusProduct
-    }
-    else {
-        $Get_Antivirus = Get-WmiObject -Namespace root/SecurityCenter2 -Class AntiVirusProduct
-    }
-    #foreach ($antivirus in $Get_Antivirus) {
-    #    $Antivirus_list = $Antivirus_list + $antivirus.displayname + " "
-    #}
+    $NetworkInfo = Get-NetworkInfo
+    
+    $My_IP.content = $NetworkInfo.IPv4.ToString() + " / " + $NetworkInfo.Subnet.ToString()
+    $My_MAC.content = $NetworkInfo.MAC.ToString()
+    $Domain_name.content = "$Domain_test"
+    
+    # TODO: Remove because unused
+    # foreach ($antivirus in $Get_Antivirus) {
+    # $Antivirus_list = $Antivirus_list + $antivirus.displayname + " "
+    # }
     $CurrentAntivirusSolution = $Get_Antivirus | Sort-Object timestamp -Descending | Select-Object -First 1
 
     if ($CurrentAntivirusSolution.displayName -eq "Windows Defender") {
@@ -477,15 +504,7 @@ function Get_Details_Infos {
         }
     }
     
-    $My_IP.content = "$IP_Address" + " / " + "$IP_Subnet"
-    $My_MAC.content = "$MAC_Address"
-    $Domain_name.content = "$Domain_test"
-
-    $Chart.Visibility = "Visible"
-    $Bar.Visibility = "Collapsed"
-    
     # Get Graphic Cards info
-    $Graphic_Card_info = (Get-CimInstance CIM_VideoController)
     if (($Graphic_Card_info.count) -gt 1) {
         foreach ($Card in $Graphic_Card_info) {
             ### Enum Disk 
@@ -505,7 +524,7 @@ function Get_Details_Infos {
     $Graphic_Cards_with_DriverVersion = $Graphic_Cards_with_DriverVersion.trim()
     $Graphisme.Content = $Graphic_Cards
     $Graphic_Card_details.Content = $Graphic_Cards_with_DriverVersion
-
+    
     # Get Graphic Wifi info + Translation
     $Wifi_Card_Info = (Get-NetAdapter -Name WLAN, WI-FI -ErrorAction SilentlyContinue)
     if (($Wifi_Card_Info.count) -eq 0) {
@@ -528,39 +547,31 @@ function Get_Details_Infos {
         $Wifi_Cards = $Wifi_Cards.trim()
         $Wifi_Card.Content = $Wifi_Cards
     }
-}
+} # /end Get-DetailsTabInformation
 
-#########################################################################
-#                        INFORMATIONS FROM DETAILS PART                 #
-#########################################################################
+### INFORMATIONS FROM OVERVIEWPART
+function Get-OverviewTabInformation {
+    #$User = $env:USERPROFILE
+    #$ProgData = $env:PROGRAMDATA
 
-#########################################################################
-#                        INFORMATIONS FROM OVERVIEWPART                 #
-#########################################################################
-
-function Get_Overview_Infos {
-    $User = $env:USERPROFILE
-    $ProgData = $env:PROGRAMDATA
     if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
         $Win32_BIOS = Get-CimInstance Win32_BIOS
-    }
-    else {
-        $Win32_BIOS = Get-WmiObject Win32_BIOS
-    }
-    if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
         $Win32_OperatingSystem = Get-CimInstance Win32_OperatingSystem
-    }
-    else {
+        #$Computer_Model = ((Get-CimInstance -Class:Win32_ComputerSystem).Model).Substring(0,4)
+    } else {
+        $Win32_BIOS = Get-WmiObject Win32_BIOS
         $Win32_OperatingSystem = Get-WmiObject Win32_OperatingSystem
+        #$Computer_Model = ((Get-WmiObject -Class:Win32_ComputerSystem).Model).Substring(0,4)
     }
+
     $Manufacturer = $Win32_ComputerSystem.Manufacturer
     $MTM = $Win32_ComputerSystem.Model
     $Serial_Number = $Win32_BIOS.SerialNumber
     $Memory_RAM = [Math]::Round(($Win32_ComputerSystem.TotalPhysicalMemory / 1GB), 1)
-    $REG_OS_Version = Get-ItemProperty -Path registry::"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -ErrorAction SilentlyContinue
-
-    $OS_Ver = $Win32_OperatingSystem.version
-    $Build_number = $Win32_OperatingSystem.buildnumber
+    $REG_OS_Version = Get-ItemProperty -Path Registry::"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -ErrorAction SilentlyContinue
+    
+    $OS_Ver = $Win32_OperatingSystem.Version
+    $Build_number = $Win32_OperatingSystem.BuildNumber
     if ($OS_Ver -like "10*") {
         $OS_ReleaseID = $REG_OS_Version.ReleaseID
         $OS_DisplayVersion = $REG_OS_Version.DisplayVersion
@@ -576,19 +587,13 @@ function Get_Overview_Infos {
     }
 
     if ($Manufacturer -like "*lenovo*") {
-        #if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-        #    $Computer_Model = ((Get-CimInstance -Class:Win32_ComputerSystem).Model).Substring(0,4)
-        #}
-        #else {
-        #    $Computer_Model = ((Get-WmiObject -Class:Win32_ComputerSystem).Model).Substring(0,4)
-        #}
         $Computer_Model = ($Win32_ComputerSystem.Model).Substring(0, 4)
     }
     else {
         $Computer_Model = ($Win32_ComputerSystem.Model)
     }
+    
     $Device_Model.Content = "Computer model: $Computer_Model"
-
     $Ma_Machine.Content = "Device name: " + $env:computername
     $OS_Titre.Content = $Computer_Mode
     $OS_Version.Content = "Windows 10 - $Release"
@@ -599,15 +604,15 @@ function Get_Overview_Infos {
     $Serial.Content = "Serial number: $Serial_Number"
 }
 
+
 #########################################################################
 #                        INFORMATIONS FROM OVERVIEWPART                 #
 #########################################################################
 
-Launch_modal_progress
-
-$Win32_LogicalDisk = Get-ciminstance Win32_LogicalDisk | Where-Object { $_.DeviceID -eq "C:" }
-
-function Get_Disk_Infos {
+function Get-StorageTabInformation {
+    [CmdLetBinding()]
+    param()
+    
     $Total_size = [Math]::Round(($Win32_LogicalDisk.size / 1GB), 1)
     $Free_size = [Math]::Round(($Win32_LogicalDisk.Freespace / 1GB), 1)
     $Disk_information = $Disk_information + "(" + $Win32_LogicalDisk.deviceid + ") " + $Total_size + " GB (Total size) / " + + $Free_size + " GB (Free space)`n"
@@ -624,14 +629,21 @@ function Get_Disk_Infos {
     else {
         $Disk_Warning.Visibility = "Collapsed"
     }
+
+    # Standard Storage Tab
+    $Chart.Visibility = "Visible"
+    $Bar.Visibility = "Collapsed"
 }
 
-if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-    $Get_MECM_Client_Version = (Get-CimInstance -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
-}
-else {
-    $Get_MECM_Client_Version = (Get-WmiObject -Namespace root\ccm -Class SMS_Client -ErrorAction SilentlyContinue).ClientVersion
-}
+Launch_modal_progress
+
+Initialize-Variables
+Get-OverviewTabInformation
+Get-DetailsTabInformation
+Get-StorageTabInformation
+
+# TODO: Move into Tab Function
+# MECM / SCCM Information
 if ($null -eq $Get_MECM_Client_Version) {
     $MECM_Client_Version_Block.Visibility = "Collapsed"
     $MECM_Client_Block.Visibility = "Collapsed"
@@ -643,11 +655,10 @@ else {
     $MECM_Client_Version_Label.Content = $Get_MECM_Client_Version
 }
 
-
 $Get_Support_Infos_Content = [xml](get-content "$current_folder\Config\Main_Config.xml")
 $Reboot_Days_Alert = $Get_Support_Infos_Content.Config.Reboot_Days_Alert
 
-$Last_boot = Get-CimInstance -ClassName Win32_OperatingSystem | Select-Object -ExpandProperty LastBootUpTime
+# Boot & Reboot Information
 $Current_Date = Get-Date
 $Diff_boot_time = $Current_Date - $Last_boot
 $Last_Reboot.Content = "Last reboot: $Last_boot"
@@ -662,10 +673,6 @@ else {
     $Last_Reboot_Alert.Content = ""
     $Reboot_Alert_Block.Visibility = "Collapsed"
 }
-
-Get_Overview_Infos
-Get_Details_Infos
-Get_Disk_Infos
 
 # function Test-PendingReboot {
 # if (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending" -EA Ignore) { return $true }
