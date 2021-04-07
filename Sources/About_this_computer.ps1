@@ -612,7 +612,8 @@ function Get-OverviewTabInformation {
     $Ma_Machine.Content = "Device name: " + $env:COMPUTERNAME
     $OS_Titre.Content = $Computer_Mode
     $OS_Version.Content = $OSString # Old: "Windows 10 - $Release"
-    $Mon_FARO.Content = "Current User: " + $env:USERNAME # UserDNSDomain
+    #$Mon_FARO.Content = "Current User: " + $env:USERNAME # UserDNSDomain
+    $Mon_FARO.Content = $UserString
     # $Graphisme.Content = "Graphic card: $Graphic_Card"
     # $Graphic_Card_details.Content = "$Graphic_Card"
     $Memory.Content = "Memory (RAM): $Memory_RAM GB ($CIM_Memory_Slots Slots)"
