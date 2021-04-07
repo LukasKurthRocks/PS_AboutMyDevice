@@ -19,3 +19,4 @@ Auswahl oder alle Addressen in Tooltip anzeigen? Eventuell mit Kartennamen!?
 - [ ] TeamViewer Status? (Läuft, Läuft nicht, Version, PW?, ID?)
   - [ ] Alternativ AnyDesk?
 - [ ] Sprachinformationen (System + User)
+- [ ] Script-Ausführung mit [PSProfiler](https://www.powershellgallery.com/packages/PSProfiler) testen
