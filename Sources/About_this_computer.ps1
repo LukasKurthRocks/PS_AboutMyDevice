@@ -214,14 +214,6 @@ function Close_modal_progress {
 # }
 # $Disk_information = $Disk_information.trim()
 
-# TODO: Remove
-#if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
-#    $Win32_ComputerSystem = Get-CimInstance Win32_ComputerSystem
-#}
-#else {
-#    $Win32_ComputerSystem = Get-WmiObject Win32_ComputerSystem
-#}
-
 function Initialize-Variables {
     if (Get-Command -Name "Get-CimInstance" -ErrorAction SilentlyContinue) {
         $Script:Win32_ComputerSystem = Get-CimInstance Win32_ComputerSystem
@@ -317,9 +309,9 @@ function Get-DetailsTabInformation {
     # }
     
     # Testing for domain or workgroup
-    if (($Win32_ComputerSystem.partofdomain -eq $True)) {
+    if (($Win32_ComputerSystem.PartOfDomain -eq $True)) {
         $Domain_WKG_Label.Content = "Domain:"
-        $Domain_test = $env:USERDNSDOMAIN;
+        $Domain_test = $env:USERDNSDOMAIN
     }
     else {
         $Domain_WKG_Label.Content = "Workgroup:"
@@ -558,20 +550,23 @@ function Get-OverviewTabInformation {
         $Win32_BIOS = Get-CimInstance Win32_BIOS
         $Win32_OperatingSystem = Get-CimInstance Win32_OperatingSystem
         #$Computer_Model = ((Get-CimInstance -Class:Win32_ComputerSystem).Model).Substring(0,4)
-    } else {
+        $CIM_Memory_Slots = Get-CimInstance -Class cim_physicalmemory | Select-Object Capacity | Measure-Object | Select-Object -ExpandProperty Count
+        #$CIM_MemorySeparate = Get-CimInstance -Class cim_physicalmemory | Select-Object Capacity | ForEach-Object { ($_.Capacity / 1024KB) }
+    }
+    else {
         $Win32_BIOS = Get-WmiObject Win32_BIOS
         $Win32_OperatingSystem = Get-WmiObject Win32_OperatingSystem
         #$Computer_Model = ((Get-WmiObject -Class:Win32_ComputerSystem).Model).Substring(0,4)
+        $CIM_Memory_Slots = Get-WmiObject -Class cim_physicalmemory | Select-Object Capacity | Measure-Object | Select-Object -ExpandProperty Count
+        #$CIM_MemorySeparate = Get-WmiObject -Class cim_physicalmemory | Select-Object Capacity | ForEach-Object { ($_.Capacity / 1024KB) }
     }
 
     $Manufacturer = $Win32_ComputerSystem.Manufacturer
-    $MTM = $Win32_ComputerSystem.Model
     $Serial_Number = $Win32_BIOS.SerialNumber
     $Memory_RAM = [Math]::Round(($Win32_ComputerSystem.TotalPhysicalMemory / 1GB), 1)
-    $REG_OS_Version = Get-ItemProperty -Path Registry::"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -ErrorAction SilentlyContinue
+    $REG_OS_Version = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\" -ErrorAction SilentlyContinue
     
     $OS_Ver = $Win32_OperatingSystem.Version
-    $Build_number = $Win32_OperatingSystem.BuildNumber
     if ($OS_Ver -like "10*") {
         $OS_ReleaseID = $REG_OS_Version.ReleaseID
         $OS_DisplayVersion = $REG_OS_Version.DisplayVersion
@@ -582,9 +577,23 @@ function Get-OverviewTabInformation {
             $Release = $OS_ReleaseID
         }
     }
+    elseif ($OS_Ver -like "7.*") {
+        switch ($Win32_OperatingSystem.BuildNumber) {
+            # Windows 7 Release = Service Packs
+            '7600' { $Release = "SP0" }
+            '7601' { $Release = "SP1" }
+        }
+    }
     else {
         $Release = ""
     }
+    # Patch Number
+    if (!($OS_UBRNumber = $REG_OS_Version.UBR)) {
+        $OS_UBRNumber = 0
+    }
+
+    # e.g.: Microsoft Windows 10 Enterprise 20H1 64-Bit 10.0.19042.804
+    $OSString = "$($Win32_OperatingSystem.Caption.Trim()) $Release $($Win32_OperatingSystem.OSArchitecture) $($Win32_OperatingSystem.Version).$OS_UBRNumber"
 
     if ($Manufacturer -like "*lenovo*") {
         $Computer_Model = ($Win32_ComputerSystem.Model).Substring(0, 4)
@@ -592,15 +601,21 @@ function Get-OverviewTabInformation {
     else {
         $Computer_Model = ($Win32_ComputerSystem.Model)
     }
+
+    $UserString = $env:USERNAME
+    if($env:USERDNSDOMAIN) {
+        $UserString = "$env:USERDNSDOMAIN\" + $UserString
+    }
     
+    # TODO: Rename this french stuff!!!!
     $Device_Model.Content = "Computer model: $Computer_Model"
-    $Ma_Machine.Content = "Device name: " + $env:computername
+    $Ma_Machine.Content = "Device name: " + $env:COMPUTERNAME
     $OS_Titre.Content = $Computer_Mode
-    $OS_Version.Content = "Windows 10 - $Release"
-    $Mon_FARO.Content = "My user name: " + $env:username
+    $OS_Version.Content = $OSString # Old: "Windows 10 - $Release"
+    $Mon_FARO.Content = "Current User: " + $env:USERNAME # UserDNSDomain
     # $Graphisme.Content = "Graphic card: $Graphic_Card"
     # $Graphic_Card_details.Content = "$Graphic_Card"
-    $Memory.Content = "Memory (RAM): $Memory_RAM GB"
+    $Memory.Content = "Memory (RAM): $Memory_RAM GB ($CIM_Memory_Slots Slots)"
     $Serial.Content = "Serial number: $Serial_Number"
 }
 

@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Passwort + Active Directory Admin Authentication (Authentication itself will be implemented via PowerShell)
   - https://www.systanddeploy.com/2019/12/task-sequence-password-protect-gui-for.html
   - https://github.com/damienvanrobaeys/TS_AD_Protect\
+- Win OS + Build and Release Number
+- More User Information (DNSDomain)
+- Memory Slots
 
 ### Changed
 - Changed WIM to CIM, well catually combined, but using CIM when available.
