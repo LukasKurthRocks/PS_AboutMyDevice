@@ -5,10 +5,10 @@
                       xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
                       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                      Title="About My Device"
+                      Title="About My Device - Admin Panel"
                       Topmost="True"
-                      Width="650"
-                      Height="400"
+                      Width="1050"
+                      Height="700"
                       ResizeMode="CanMinimize"
                       BorderThickness="1"
                       WindowStartupLocation="CenterScreen"
@@ -19,7 +19,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Red.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Red.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="{x:Type ToolTip}"
@@ -69,22 +69,6 @@
                 <iconPacks:PackIconMaterial Kind="HelpCircle" />
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Open up the GitHub site"
-                                  Click="Click_LaunchGitHubSite">
-                            <MenuItem.Icon>
-                                <iconPacks:PackIconModern Kind="SocialGithubOctocat"
-                                                          Margin="10,0,0,0"
-                                                          ToolTip="_TODO_" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="Admin Panel"
-                                  Click="Click_OpenAdminPanel">
-                            <MenuItem.Icon>
-                                <iconPacks:PackIconMaterial Kind="Security"
-                                                            Margin="10,0,0,0"
-                                                            ToolTip="_TODO_" />
-                            </MenuItem.Icon>
-                        </MenuItem>
 
                         <MenuItem Header="Status of my PC">
                             <MenuItem Name="Soft_List"
@@ -188,7 +172,6 @@
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
     <DockPanel>
-
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -230,19 +213,74 @@
         <TabControl x:Name="TabControl"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    TabStripPlacement="Top">
+                    TabStripPlacement="Top"
+                    Style="{DynamicResource MahApps.Styles.TabControl.AnimatedSingleRow}"
+                    SelectedIndex="0">
             <Controls:MetroTabItem x:Name="tabInformation"
                                    Header="Info">
                 <Grid>
-                    <Controls:ToggleSwitch Header="ToggleSwitch"
-                                           Height="100"
-                                           Margin="478,10,0,0"
-                                           VerticalAlignment="Top"
-                                           Width="100" />
-                    <Label Content="IsConrtanaActive?"
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*" />
+                        <ColumnDefinition Width="49*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="WinRM Status:"
                            HorizontalAlignment="Left"
-                           Margin="129,52,0,0"
+                           Margin="10,41,0,0"
                            VerticalAlignment="Top" />
+                    <Label Content="PowerShell + Windows Terminal:"
+                           HorizontalAlignment="Left"
+                           Margin="10,72,0,0"
+                           VerticalAlignment="Top"
+                           Grid.ColumnSpan="2" />
+                    <Button Content="Setup WinRM"
+                            HorizontalAlignment="Left"
+                            Margin="105,39,0,0"
+                            VerticalAlignment="Top"
+                            Style="{DynamicResource MahApps.Styles.Button.Square.Accent}"
+                            Grid.ColumnSpan="2" />
+                    <Button Content="Install Windows Terminal"
+                            HorizontalAlignment="Left"
+                            Margin="84,71,0,0"
+                            VerticalAlignment="Top"
+                            Style="{DynamicResource MahApps.Styles.Button.Square.Accent}"
+                            Grid.Column="1" />
+                    <Button Content="Install PSCore"
+                            HorizontalAlignment="Left"
+                            Margin="230,71,0,0"
+                            VerticalAlignment="Top"
+                            Style="{DynamicResource MahApps.Styles.Button.Square.Accent}"
+                            Grid.Column="1" />
+                    <Label Content="Language Information:"
+                           HorizontalAlignment="Left"
+                           Margin="10,103,0,0"
+                           VerticalAlignment="Top"
+                           Grid.ColumnSpan="2" />
+                    <Label Content="Domain:"
+                           HorizontalAlignment="Left"
+                           Margin="350,10,0,0"
+                           VerticalAlignment="Top"
+                           Grid.Column="1" />
+                    <Label Content="Is Virtual:"
+                           HorizontalAlignment="Left"
+                           Margin="350,41,0,0"
+                           VerticalAlignment="Top"
+                           Grid.Column="1" />
+                    <Label Content="Is Kiosk:"
+                           HorizontalAlignment="Left"
+                           Margin="350,72,0,0"
+                           VerticalAlignment="Top"
+                           Grid.Column="1" />
+                    <Button Content="Open Network Settings"
+                            HorizontalAlignment="Left"
+                            Margin="10,276,0,0"
+                            VerticalAlignment="Top"
+                            Style="{DynamicResource MahApps.Styles.Button.Square.Accent}"
+                            Grid.ColumnSpan="2" />
+                    <Label Content="AD Info: (OU Path, Groups, User etc.)"
+                           HorizontalAlignment="Left"
+                           Margin="10,134,0,0"
+                           VerticalAlignment="Top"
+                           Grid.ColumnSpan="2" />
 
                 </Grid>
             </Controls:MetroTabItem>
@@ -250,7 +288,6 @@
                      Header="Config">
 
                 <Grid>
-
                     <Label Content="Cortana Status:"
                            HorizontalAlignment="Left"
                            Margin="10,10,0,0"
@@ -261,8 +298,7 @@
                            HorizontalAlignment="Left"
                            Margin="10,52,0,0"
                            VerticalAlignment="Top"
-                           Foreground="#C9C6D3"
-                            />
+                           Foreground="#C9C6D3" />
                     <Button Content="Remove OnveDrive"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
@@ -274,566 +310,1073 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Name="Overview"
-                     Header="Overview"
-                     Visibility="Collapsed">
-
-                <StackPanel Orientation="Vertical"
-                            Margin="0,0,0,0"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal"
-                                Margin="0,0,0,0">
-                        <StackPanel Orientation="Vertical"
-                                    Margin="0,30,0,0">
-                            <!-- <Ellipse Name="Next_logo" Height="150" Width="150" Stroke="#CFCCD6" StrokeThickness="4"> -->
-                            <!-- <Ellipse.Fill> -->
-                            <!-- <ImageBrush ImageSource="Images\logo.png" AlignmentX="Center" AlignmentY="Center">																						 -->
-                            <!-- </ImageBrush> -->
-                            <!-- </Ellipse.Fill> -->
-                            <!-- </Ellipse>	 -->
-
-                            <Border Margin="0,15,0,0"
-                                    Height="150"
-                                    Width="150">
-                                <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource PreviousData}}"
-                                      Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource PreviousData}}">
-                                    <Ellipse Height="150"
-                                             Width="150"
-                                             Stroke="#CFCCD6"
-                                             StrokeThickness="4" />
-                                    <!-- <Image Name="Tool_Logo" Source="Images\logo.png" Height="90" Margin="0,-10,0,0"/> -->
-                                    <Image Name="Tool_Logo"
-                                           Height="90"
-                                           Margin="0,-10,0,0" />
-                                </Grid>
-                            </Border>
-
-                        </StackPanel>
-
-                        <StackPanel Orientation="Vertical"
-                                    Margin="60,0,0,0">
-                            <Label Foreground="#C9C6D3"
-                                   Name="OS_Title"
-                                   FontSize="25" />
-                            <Label Foreground="#C9C6D3"
-                                   Name="MyMachine"
-                                   FontSize="14" />
-                            <Label Foreground="#C9C6D3"
-                                   Name="UnkownValue"
-                                   FontSize="14" />
-                            <Label Foreground="#C9C6D3"
-                                   Name="OS_Version"
-                                   FontSize="14" />
-                            <Label Foreground="#C9C6D3"
-                                   Name="Memory"
-                                   Content="Memory"
-                                   FontSize="14" />
-                            <!-- <Label Foreground="#C9C6D3" Name="Graphisme" Content="Graphisme" FontSize="14"/> -->
-
-                            <StackPanel Orientation="Horizontal">
-                                <Label Foreground="#C9C6D3"
-                                       Content="Graphic card:"
-                                       FontSize="14"
-                                       Width="90" />
-                                <Label Foreground="#C9C6D3"
-                                       Name="Graphics"
-                                       FontSize="14" />
-                            </StackPanel>
-
-                            <Label Foreground="#C9C6D3"
-                                   Name="Serial"
-                                   Content="Serial Number"
-                                   FontSize="14" />
-                            <Label Foreground="#C9C6D3"
-                                   Name="Device_Model"
-                                   Content="Device Model"
-                                   FontSize="14" />
-                            <StackPanel Orientation="Horizontal">
-                                <Label Foreground="#C9C6D3"
-                                       Name="Last_Reboot"
-                                       Content="Last_Reboot"
-                                       FontSize="14" />
-                                <Label Name="Last_Reboot_Alert"
-                                       FontSize="14" />
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                    <StackPanel Name="Reboot_Alert_Block"
-                                HorizontalAlignment="Center"
-                                Margin="0,20,0,0">
-                        <Label FontWeight="Bold"
-                               Foreground="yellow"
-                               Name="IsRebootRequired"
-                               Content="An update requires a reboot!!!"
-                               FontSize="14" />
-                    </StackPanel>
-                </StackPanel>
-            </TabItem>
-
-            <TabItem Name="Monitors"
-                     Header="Monitors">
-                <StackPanel Orientation="Horizontal"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-
-                    <ScrollViewer Grid.Row="1"
-                                  HorizontalScrollBarVisibility="Auto"
-                                  VerticalScrollBarVisibility="Disabled"
-                                  HorizontalAlignment="Stretch"
-                                  Margin="0,0,20,25"
-                                  VerticalAlignment="Center">
-                        <Grid x:Name="MonitorList">
-
-                        </Grid>
-                    </ScrollViewer>
-                </StackPanel>
-            </TabItem>
-
-            <TabItem Name="Storage"
-                     Header="Storage">
-                <StackPanel Margin="0,10,0,0">
-                    <StackPanel Orientation="Horizontal">
-                        <Label FontWeight="Bold"
-                               Foreground="#C9C6D3"
-                               FontSize="14"
-                               Name="Disk_Percent_Title"
-                               Content="Disk usage percentage" />
-                        <Label Foreground="#C9C6D3"
-                               Name="Disk_Warning"
-                               FontSize="14"
-                               Margin="0,0,0,0"></Label>
-                        <!-- <TextBlock Name="List_Large_Files" Text="(Click here to list 10 large files on C:\)" FontWeight="Bold" Foreground="#C9C6D3" FontSize="14"/> -->
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Label Foreground="#C9C6D3"
-                               Name="My_Disk_Info"
-                               FontSize="14"></Label>
-                        <!--
-                            <Controls:ToggleSwitch Name="Storage_Design"
-                                                   Margin="0,4,0,0"
-                                                   IsChecked="True"
-                                                   OnLabel=" Graphic"
-                                                   OffLabel=" Bar"
-                                                   Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" />
-                            -->
-                        <Controls:ToggleSwitch Header="Toggle Switch Sample"
-                                               OffContent="Do work"
-                                               OnContent="Working"
-                                               Toggled="ToggleSwitch_Toggled" />
-                        <Controls:ToggleSwitch Name="Storage_Design"
-                                               Margin="0,4,0,0" />
-                    </StackPanel>
-
+            <Controls:MetroTabItem Header="Customization">
+                <ScrollViewer x:Name="scvCustomizationMenuItems"
+                              VerticalScrollBarVisibility="Auto">
                     <StackPanel>
-                        <TextBlock Name="List_Large_Files"
-                                   Margin="5,-15,0,0"
-                                   FontSize="14"
-                                   Text="Click here to list 10 large files on C:\ (Then wait a bit...)"
-                                   Foreground="#C9C6D3" />
-                    </StackPanel>
 
-                    <StackPanel Name="Chart">
-                        <lvc:PieChart  x:Name="Doughnut"
-                                       Width="400"
-                                       Height="220"
-                                       DataTooltip="{x:Null}"
-                                       LegendLocation="Right"
-                                       Hoverable="True">
-                            <lvc:PieChart.ChartLegend>
-                                <lvc:DefaultLegend BulletSize="20"></lvc:DefaultLegend>
-                            </lvc:PieChart.ChartLegend>
-                        </lvc:PieChart>
-                    </StackPanel>
-
-                    <StackPanel Name="Bar"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                Margin="0,15,0,0">
-                        <StackPanel>
-                            <Image Source="Images\hdd1.png"
-                                   Margin="0,5,0,0" />
-                        </StackPanel>
-
-                        <StackPanel Margin="10,0,0,0">
-                            <Border Name="Main_bar"
-                                    Width="500"
-                                    Height="35"
-                                    BorderBrush="White"
-                                    BorderThickness="1">
-                                <StackPanel Orientation="Horizontal">
-                                    <StackPanel Name="MyDesktop" />
-                                    <StackPanel Name="MyDocs" />
-                                    <StackPanel Name="Downloads" />
-                                    <StackPanel Name="Music" />
-                                    <StackPanel Name="Free" />
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <StackPanel Margin="0,20,0,0"
-                                Orientation="Vertical"
-                                HorizontalAlignment="Center">
-                        <StackPanel Margin="0,0,0,0"
-                                    Orientation="Horizontal">
+                        <GroupBox x:Name="customSettingsGeneral"
+                                  Margin="10,10,10,10"
+                                  Header="General"
+                                  Visibility="Visible">
+                            <Grid>
+                                <Controls:ToggleSwitch Margin="10,10,0,0"
+                                                       VerticalAlignment="Top"
+                                                       Content="Disable Cortana"
+                                                       FontSize="10" />
+                                <Controls:ToggleSwitch Content="Disable UAC (EnableLUA)"
+                                                       Margin="10,47,0,0"
+                                                       VerticalAlignment="Top" />
+                                <Button Content="Install CMTrace"
+                                        HorizontalAlignment="Left"
+                                        Margin="643,34,0,0"
+                                        VerticalAlignment="Top"
+                                        Style="{DynamicResource MahApps.Styles.Button.Square.Accent}" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox x:Name="customSettingsSpecial"
+                                  Header="Special Settings"
+                                  Margin="10,0,10,10"
+                                  Visibility="Visible">
+                            <Grid>
+                                <CheckBox x:Name="chkCustomizationDisableConsumerExperience"
+                                          Content="Disable MS Consumer Experience (DisableWindowsConsumerFeatures)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,10,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationDisableLogonMessage"
+                                          Content="Disable MS Logon Message (EnableFirstLogonAnimation)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,33,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationEnableSoftLanding"
+                                          Content="Enable &quot;Do not show User Tips&quot; (DisableSoftLanding)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,56,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationSetExecutionPolicy"
+                                          Content="Enable-ExecutionPolicy RS"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,111,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationBlockTelemetry"
+                                          Content="Block Microsoft Telemetry (hosts file)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,134,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="False" />
+                                <CheckBox x:Name="chkCustomizationOEMInformation"
+                                          Content="Custom OEM Information"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,161,0,0"
+                                          VerticalAlignment="Top" />
+                                <Button x:Name="btnCustomizationOEMInformation"
+                                        Content="OEM Information"
+                                        HorizontalAlignment="Left"
+                                        Margin="182,157,0,0"
+                                        VerticalAlignment="Top"
+                                        Width="132"
+                                        IsEnabled="{Binding IsChecked, ElementName=chkCustomizationOEMInformation}" />
+                                <CheckBox x:Name="chkCustomizationChangeWinXPowerShell"
+                                          Content="Change from CMD to PowerShell on Shortcut Win + X (DontUsePowerShellOnWinX)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,195,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationUsePowershellQuickEdit"
+                                          Content="CMD/Powershell: Enable QuickEdit"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,218,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationDisableEnableLUA"
+                                          Content="Disable &quot;Enable LUA&quot; (User Account Controls (UAC), formerly known as Limited User Account)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,88,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True"
+                                          IsEnabled="False" />
+                                <!-- TODO: Implement more windows update options -->
+                                <!-- TODO: Move to Windows Update section -->
+                                <CheckBox x:Name="chkCustomizationWUDisableService"
+                                          Content="Disable Windows Update Service"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,241,0,0"
+                                          VerticalAlignment="Top" />
+                                <ComboBox x:Name="cmboCustomizationWUAutomaticUpdatesSelection"
+                                          HorizontalAlignment="Left"
+                                          Margin="159,264,0,0"
+                                          VerticalAlignment="Top"
+                                          Width="235"
+                                          SelectedIndex="1"
+                                          IsEnabled="False">
+                                    <ComboBoxItem Content="1 - Unknown"
+                                                  IsEnabled="False" />
+                                    <ComboBoxItem Content="2 - Notify download and notify install" />
+                                    <ComboBoxItem Content="3 - Auto download and notify install" />
+                                    <ComboBoxItem Content="4 - Auto download and schedule install"
+                                                  IsEnabled="False" />
+                                    <ComboBoxItem Content="5 - Allow local admin to choose settings"
+                                                  IsEnabled="False" />
+                                </ComboBox>
+                                <Label Content="Automatic Update Mode:"
+                                       HorizontalAlignment="Left"
+                                       Margin="10,264,0,0"
+                                       VerticalAlignment="Top"
+                                       IsEnabled="False" />
+                                <ComboBox x:Name="cmboCustomizationWUAutomaticUpdatesScheduledInstallDay"
+                                          HorizontalAlignment="Left"
+                                          Margin="399,264,0,0"
+                                          VerticalAlignment="Top"
+                                          Width="134"
+                                          IsEnabled="False"
+                                          SelectedIndex="0">
+                                    <ComboBoxItem Content="0 - Daily" />
+                                    <ComboBoxItem Content="1 - Every Sunday" />
+                                    <ComboBoxItem Content="2 - Every Monday" />
+                                    <ComboBoxItem Content="3 - Every Tuesday" />
+                                    <ComboBoxItem Content="4 - Every Wednesday" />
+                                    <ComboBoxItem Content="5 - Every Thursday" />
+                                    <ComboBoxItem Content="6 - Every Friday" />
+                                    <ComboBoxItem Content="7 - Every Saturday" />
+                                </ComboBox>
+                                <ComboBox x:Name="cmboCustomizationWUAutomaticUpdatesScheduledInstallTime"
+                                          HorizontalAlignment="Left"
+                                          Margin="538,264,0,0"
+                                          VerticalAlignment="Top"
+                                          Width="89"
+                                          IsEnabled="False"
+                                          SelectedIndex="3">
+                                    <ComboBoxItem Content="00:00" />
+                                    <ComboBoxItem Content="01:00" />
+                                    <ComboBoxItem Content="02:00" />
+                                    <ComboBoxItem Content="03:00" />
+                                    <ComboBoxItem Content="04:00" />
+                                    <ComboBoxItem Content="05:00" />
+                                    <ComboBoxItem Content="06:00" />
+                                    <ComboBoxItem Content="07:00" />
+                                    <ComboBoxItem Content="08:00" />
+                                    <ComboBoxItem Content="09:00" />
+                                    <ComboBoxItem Content="10:00" />
+                                    <ComboBoxItem Content="11:00" />
+                                    <ComboBoxItem Content="12:00" />
+                                    <ComboBoxItem Content="13:00" />
+                                    <ComboBoxItem Content="14:00" />
+                                    <ComboBoxItem Content="15:00" />
+                                    <ComboBoxItem Content="16:00" />
+                                    <ComboBoxItem Content="17:00" />
+                                    <ComboBoxItem Content="18:00" />
+                                    <ComboBoxItem Content="19:00" />
+                                    <ComboBoxItem Content="20:00" />
+                                    <ComboBoxItem Content="21:00" />
+                                    <ComboBoxItem Content="22:00" />
+                                    <ComboBoxItem Content="23:00" />
+                                    <ComboBoxItem Content="Automatic" />
+                                    <ComboBoxItem />
+                                </ComboBox>
+                                <CheckBox x:Name="chkCustomizationUpdatesEveryWeek"
+                                          Content="Every Week"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,295,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkCustomizationUpdatesEvery1st"
+                                          Content="1st"
+                                          HorizontalAlignment="Left"
+                                          Margin="141,295,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkCustomizationUpdatesEvery2nd"
+                                          Content="2nd"
+                                          HorizontalAlignment="Left"
+                                          Margin="186,295,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkCustomizationUpdatesEvery3rd"
+                                          Content="3rd"
+                                          HorizontalAlignment="Left"
+                                          Margin="235,295,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkCustomizationUpdatesEvery4th"
+                                          Content="4th"
+                                          HorizontalAlignment="Left"
+                                          Margin="282,295,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <Label Content="Week/Month"
+                                       HorizontalAlignment="Left"
+                                       Margin="328,291,0,0"
+                                       VerticalAlignment="Top"
+                                       IsEnabled="False" />
+                                <CheckBox x:Name="chkCustomizationUpdatesInlcudeMSU"
+                                          Content="Include Microsoft Updates"
+                                          HorizontalAlignment="Left"
+                                          Margin="464,295,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True"
+                                          IsEnabled="False" />
+                                <!--<CheckBox Content="CheckBox" HorizontalAlignment="Left" Margin="10,500,0,0" VerticalAlignment="Top" IsEnabled="False"/>-->
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox x:Name="customSettingsCortana"
+                                  Header="Cortana"
+                                  Margin="10,0,10,10">
                             <StackPanel>
-                                <Border Name="Legend_Border_MyDesktop"
-                                        BorderBrush="White"
-                                        BorderThickness="2,2,2,2"
-                                        Background="Yellow"
-                                        Padding="8"
-                                        CornerRadius="15" />
+                                <CheckBox x:Name="chkCustomizationHideCortanaTaskbarLock"
+                                          Content="Hide Cortana from TaskBar (SearchboxTaskbarMode) - Default User"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          Foreground="Red"
+                                          IsEnabled="False"
+                                          IsChecked="{Binding IsChecked, ElementName=chkCustomizationHideCortanaTaskbar}" />
+                                <CheckBox x:Name="chkCustomizationDenyCortana"
+                                          Content="Deny Cortana (AllowCortana)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationDisableBingWebSearch"
+                                          Content="Disable Bing Web Search (BingSearchEnabled)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationDisableConnectedWebSearch"
+                                          Content="Disable Connected Web Search (ConnectedSearchUseWeb)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationDisableWebSearch"
+                                          Content="Disable Web Search (DisableWebSearch)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,5"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
                             </StackPanel>
-                            <Label Margin="0,-5,0,0"
-                                   Name="Legend_Label_MyDesktop" />
-                        </StackPanel>
-
-                        <StackPanel Margin="0,5,0,0"
-                                    Orientation="Horizontal">
+                        </GroupBox>
+                        <GroupBox x:Name="customSettingsDefaultUser"
+                                  Header=".Default"
+                                  Margin="10,0,10,10">
                             <StackPanel>
-                                <Border Name="Legend_Border_MyDocs"
-                                        BorderBrush="White"
-                                        BorderThickness="2,2,2,2"
-                                        Background="Yellow"
-                                        Padding="8"
-                                        CornerRadius="15" />
+                                <CheckBox x:Name="chkCustomizationRemoveStoreTaskbar"
+                                          Content="Remove Store from TaskBar (NoPinningStoreToTaskbar)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationAllSymbolsTaskbar"
+                                          Content="Show all symbols on taskbar (NoAutoTrayNotify)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationRemoveContactsTaskbar"
+                                          Content="Remove contacts from taskbar (PeopleBand)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationHideCortanaTaskbar"
+                                          Content="Hide Cortana from taskbar (SearchTaskbarMode)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          Foreground="#FFFFB900"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationRemoveOneDriveSetup"
+                                          Content="Delete OneDrive Setup registry hook (OneDriveSetup)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          Foreground="#FFFFB900"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationDisableLockScreen"
+                                          Content="Disable LockScreen tooltips (RotatingLockScreenOverlayEnabled)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkCustomizationDisableSpotlightFeature"
+                                          Content="Disable LockScreen spotlight (DisableWindowsSpotlightFeature​)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkCustomizationDisableDefenderFirstRun"
+                                          Content="Disable Microsoft/Windows Defender &quot;First Run&quot; (UIFirstRun)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationDisableMixedRealityFirstRun"
+                                          Content="Disable MixedReality 1809 (FirstRunSucceeded)"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,5"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
                             </StackPanel>
-                            <Label Margin="0,-5,0,0"
-                                   Name="Legend_Label_MyDocs" />
-                        </StackPanel>
-
-                        <StackPanel Margin="0,5,0,0"
-                                    Orientation="Horizontal">
+                        </GroupBox>
+                        <GroupBox x:Name="customSettingsWindowsExplorer"
+                                  Header="Windows Explorer"
+                                  Margin="10,0,10,10">
                             <StackPanel>
-                                <Border Name="Legend_Border_Downloads"
-                                        BorderBrush="White"
-                                        BorderThickness="2,2,2,2"
-                                        Background="Yellow"
-                                        Padding="8"
-                                        CornerRadius="15" />
+                                <CheckBox x:Name="chkCustomizationRemovePicturesThisPC"
+                                          Content="Remove Pictures from &quot;This PC&quot;"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top" />
+                                <CheckBox x:Name="chkCustomizationRemoveVideosThisPC"
+                                          Content="Remove Videos from &quot;This PC&quot;"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top" />
+                                <CheckBox x:Name="chkCustomizationRemoveMusicThisPC"
+                                          Content="Remove Music from &quot;This PC&quot;"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top" />
+                                <CheckBox x:Name="chkCustomizationExplorerLaunchToThisPC"
+                                          Content="Set Explorer always launch to &quot;This PC&quot;"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationThisPCOnDesktop"
+                                          Content="Show &quot;This PC&quot; Icon on Desktop"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationChangeThisPCMachineName"
+                                          Content="Change &quot;This PC&quot; to actual Machine Name"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkCustomizationStartmenuRunAsDifferentUser"
+                                          Content="Add &quot;Run as different User&quot; to Startmenu"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,5"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
                             </StackPanel>
-                            <Label Margin="0,-5,0,0"
-                                   Name="Legend_Label_Downloads" />
-                        </StackPanel>
-
-                        <StackPanel Margin="0,5,0,0"
-                                    Orientation="Horizontal">
+                        </GroupBox>
+                        <GroupBox x:Name="customSettingsWindows10Apps"
+                                  Header="Removing Windows 10 Apps (Bloatware)"
+                                  Margin="10,0,10,10">
                             <StackPanel>
-                                <Border Name="Legend_Border_Music"
-                                        BorderBrush="White"
-                                        BorderThickness="2,2,2,2"
-                                        Background="Yellow"
-                                        Padding="8"
-                                        CornerRadius="15" />
-                            </StackPanel>
-                            <Label Margin="0,-5,0,0"
-                                   Name="Legend_Label_Music" />
-                        </StackPanel>
+                                <CheckBox x:Name="chkApp3DBuilder"
+                                          Content="3D Builder"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppAppConnector"
+                                          Content="App Connector"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBingFinance"
+                                          Content="Bing Finance"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBingNews"
+                                          Content="Bing News"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBingSports"
+                                          Content="Bing Sports"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBingTranslator"
+                                          Content="Bing Translator"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBingWeather"
+                                          Content="Bing Weather"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppFreshPaint"
+                                          Content="Fresh Paint"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppGamingServices"
+                                          Content="Gaming Services"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkApp3DViewer"
+                                          Content="3D Viewer"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppOfficeHub"
+                                          Content="Office Hub"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppOneConnect"
+                                          Content="One Connect"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMicrosoftSolitaireCollection"
+                                          Content="Microsoft Solitaire Collection"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMicrosoftPowerBIForWindows"
+                                          Content="Power BI for Windows"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMicrosoftMinecraftUWP"
+                                          Content="Minecraft UWP"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppStickyNotes"
+                                          Content="Sticky Notes"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top" />
+                                <CheckBox x:Name="chkAppNetworkSpeedTest"
+                                          Content="Network Speed Test"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppOfficeOneNote"
+                                          Content="Office One Note"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppPeople"
+                                          Content="People"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppPrint3D"
+                                          Content="Print 3D"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppSkype"
+                                          Content="Skype"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWallet"
+                                          Content="Wallet"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWindowsPhotos"
+                                          Content="Windows Photos"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppWindowsAlarms"
+                                          Content="Windows Alarms"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top" />
+                                <CheckBox x:Name="chkAppWindowsCalculator"
+                                          Content="Windows Calculator"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppWindowsCamera"
+                                          Content="Windows Camera"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top" />
+                                <CheckBox x:Name="chkAppMailAndCalendar"
+                                          Content="Mail and Calendar"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWindowsMaps"
+                                          Content="Windows Maps"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWindowsPhone"
+                                          Content="Windows Phone"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWindowsSoundsRecorder"
+                                          Content="Windows Sounds Recorder"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWindowsStore"
+                                          Content="Windows Store"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False"
+                                          ToolTip="Can not be re-installed!" />
+                                <CheckBox x:Name="chkAppXboxApp"
+                                          Content="Xbox App"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppXboxGameOverlay"
+                                          Content="Xbox Game Overlay"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppXboxGamingOverlay"
+                                          Content="Xbox Gaming Overlay"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppXboxSpeechToText"
+                                          Content="Xbox Speech To Text"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppXboxTcui"
+                                          Content="Xbox TCUI"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppZuneMusic"
+                                          Content="Zune Music"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppZuneVideo"
+                                          Content="Zune Video"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppCommsPhone"
+                                          Content="Communications - Phone"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppConnectivityStore"
+                                          Content="ConnectivityStore"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppGetHelp"
+                                          Content="Get Help"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppGetStarted"
+                                          Content="Get Started"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMessaging"
+                                          Content="Messaging"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppOfficeSway"
+                                          Content="Office Sway"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppFeedbackHub"
+                                          Content="Feedback Hub"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMicrosoft3DViewer"
+                                          Content="Microsoft 3D Viewer"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMSPaint"
+                                          Content="MS Paint"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top" />
+                                <CheckBox x:Name="chkAppBingFoodAndDrink"
+                                          Content="Bing Food and Drink"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBingTravel"
+                                          Content="Bing Travel"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBingHealthAndFitness"
+                                          Content="Bing Health and Fitness"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWindowsReadingList"
+                                          Content="Windows Reading List"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMixedRealityPortal"
+                                          Content="Microsoft.MixedReality.Portal"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMixedRealityHolographicFirstRun"
+                                          Content="Mixed Reality: HolographicFirstRun"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppScreenSketch"
+                                          Content="Microsoft.ScreenSketch"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppYourPhone"
+                                          Content="Microsoft.YourPhone"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppDesktopAppInstaller"
+                                          Content="Desktop App Installer"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppStorePurchaseApp"
+                                          Content="Store Purchase App"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False"
+                                          ToolTip="Part of the WindowsStore app." />
+                                <CheckBox x:Name="chkAppHEIFImageExtension"
+                                          Content="Microsoft.HEIFImageExtension"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppVP9VideoExtensions"
+                                          Content="Microsoft.VP9VideoExtensions"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppWebMediaExtensions"
+                                          Content="Microsoft.WebMediaExtensions"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppWebpImageExtension"
+                                          Content="Microsoft.WebpImageExtension"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <!-- Some Apps can not be removed!! -->
+                                <!--<CheckBox x:Name="chkAppMicrosoftBioEnrollment" Content="Microsoft Bio Enrollment" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" IsEnabled="False"/>-->
+                                <!--<CheckBox x:Name="chkAppMicrosoftEdge" Content="Microsoft Edge" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" IsEnabled="False"/>-->
+                                <!--<CheckBox x:Name="chkAppWindowsCortana" Content="Cortana" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" IsEnabled="False"/>-->
+                                <CheckBox x:Name="chkAppWindowsFeedback"
+                                          Content="Windows Feedback"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <!--<CheckBox x:Name="chkAppXboxGameCallableUI" Content="Xbox Game Callable UI" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" IsEnabled="False"/>-->
+                                <CheckBox x:Name="chkAppXboxIdentityProvider"
+                                          Content="Xbox Identity Provider"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppContactSupport"
+                                          Content="Contact Support"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsEnabled="False" />
+                                <CheckBox x:Name="chkAppMicrosoftAdvertisingXAML"
+                                          Content="Microsoft Advertising XAML"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
 
-                        <StackPanel Margin="0,5,0,0"
-                                    Orientation="Horizontal">
-                            <StackPanel>
-                                <Border Name="Legend_Border_Free"
-                                        BorderBrush="White"
-                                        BorderThickness="2,2,2,2"
-                                        Background="Yellow"
-                                        Padding="8"
-                                        CornerRadius="10" />
+                                <Line X1="0"
+                                      Y1="{Binding Margin.Top, ElementName=chkAppZuneVideo}"
+                                      X2="{Binding ActualWidth, ElementName=scrvW10Apps, Mode=OneWay}"
+                                      Y2="{Binding Margin.Top, ElementName=chkAppZuneVideo}"
+                                      Stroke="#FF979797"
+                                      StrokeThickness="2" />
+
+                                <CheckBox x:Name="chkAppPicArts"
+                                          Content="2FE3CB00.PicsArt-PhotoStudio"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppEclipseManager"
+                                          Content="46928bounde.EclipseManager"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppNetflix"
+                                          Content="4DF9E0F8.Netflix"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppPolarrPhotoEditor"
+                                          Content="613EBCEA.PolarrPhotoEditorAcademicEdition"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWunderlist"
+                                          Content="6Wunderkinder.Wunderlist"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppLinkedIn"
+                                          Content="7EE7776C.LinkedInforWindows"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppAutodeskSketchBook"
+                                          Content="89006A2E.AutodeskSketchBook"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppTwitter"
+                                          Content="9E2F88E3.Twitter"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppDisneyMagicKingdoms"
+                                          Content="A278AB0D.DisneyMagicKingdoms"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppMarchofEmpires"
+                                          Content="A278AB0D.MarchofEmpires"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppArctiproCodeWriter"
+                                          Content="ActiproSoftwareLLC.562882FEEB491"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True"
+                                          ToolTip="Code Writer from Actipro Software LLC" />
+                                <CheckBox x:Name="chkAppPlex"
+                                          Content="CAF9E577.Plex"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppiHeartRadio"
+                                          Content="ClearChannelRadioDigital.iHeartRadio"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppFarmVille2CountryEscape"
+                                          Content="D52A8D61.FarmVille2CountryEscape"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppDuolingo"
+                                          Content="D5EA27B7.Duolingo-LearnLanguagesforFree"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppCyberLinkMediaSuite"
+                                          Content="DB6EA5DB.CyberLinkMediaSuiteEssentials"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppDolbyAccess"
+                                          Content="DolbyLaboratories.DolbyAccess"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppDrawboardPDF"
+                                          Content="Drawboard.DrawboardPDF"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppFacebook"
+                                          Content="Facebook.Facebook"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppFitbitCoach"
+                                          Content="Fitbit.FitbitCoach"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppFlipboard"
+                                          Content="Flipboard.Flipboard"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppAsphalt8Airborne"
+                                          Content="GAMELOFTSA.Asphalt8Airborne"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppKeeperSecurityInc"
+                                          Content="KeeperSecurityInc.Keeper"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppCOOKINGFEVER"
+                                          Content="NORDCURRENT.COOKINGFEVER"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppPandoraMediaInc"
+                                          Content="PandoraMediaInc.29680B314EFC2"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppCaesarsSlotsFreeCasino"
+                                          Content="Playtika.CaesarsSlotsFreeCasino"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppShazam"
+                                          Content="ShazamEntertainmentLtd.Shazam"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppSpotify"
+                                          Content="SpotifyAB.SpotifyMusic"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppNYTCrossword"
+                                          Content="TheNewYorkTimes.NYTCrossword"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppPhototasticCollage"
+                                          Content="ThumbmunkeysLtd.PhototasticCollage"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppTuneInRadio"
+                                          Content="TuneIn.TuneInRadio"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppWinZipUniversal"
+                                          Content="WinZipComputing.WinZipUniversal"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppXING"
+                                          Content="XINGAG.XING"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppRoyalRevolt2"
+                                          Content="flaregamesGmbH.RoyalRevolt2"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppCandyCrushSaga"
+                                          Content="king.com.CandyCrushSaga"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppCandyCrushSodaSaga"
+                                          Content="king.com.CandyCrushSodaSaga"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppBubbleWitch3Saga"
+                                          Content="king.com.BubbleWitch3Saga"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+                                <CheckBox x:Name="chkAppKingCom"
+                                          Content="king.com.*"
+                                          HorizontalAlignment="Left"
+                                          Margin="10,5,0,0"
+                                          VerticalAlignment="Top"
+                                          IsChecked="True" />
+
+                                <!--<CheckBox Content="" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" IsChecked="True"/>-->
+
+                                <Line X1="0"
+                                      Y1="{Binding Margin.Top, ElementName=chkAppXboxTcui}"
+                                      X2="{Binding ActualWidth, ElementName=scrvW10Apps, Mode=OneWay}"
+                                      Y2="{Binding Margin.Top, ElementName=chkAppXboxTcui}"
+                                      Stroke="#FF979797"
+                                      StrokeThickness="2" />
                             </StackPanel>
-                            <Label Margin="0,-5,0,0"
-                                   Name="Legend_Label_Free" />
-                        </StackPanel>
+                            <!--
+                                <Grid>
+                                    <CheckBox x:Name="chkApp3DBuilder" Content="3D Builder" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppBingWeather" Content="Bing Weather" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppDesktopAppInstaller" Content="Desktop App Installer" HorizontalAlignment="Left" Margin="10,56,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppGetStarted" Content="Get Started" HorizontalAlignment="Left" Margin="10,79,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppMessaging" Content="Messaging" HorizontalAlignment="Left" Margin="10,102,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkApp3DViewer" Content="3D Viewer" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppOfficeHub" Content="Office Hub" HorizontalAlignment="Left" Margin="10,148,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppMicrosoftSolitaireCollection" Content="Microsoft Solitaire Collection" HorizontalAlignment="Left" Margin="10,171,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppStickyNotes" Content="Sticky Notes" HorizontalAlignment="Left" Margin="10,194,0,0" VerticalAlignment="Top"/>
+                                    <CheckBox x:Name="chkAppMSPaint" Content="MS Paint" HorizontalAlignment="Left" Margin="10,217,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppOfficeOneNote" Content="Office One Note" HorizontalAlignment="Left" Margin="10,240,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppOneConnect" Content="One Connect" HorizontalAlignment="Left" Margin="10,263,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppPeople" Content="People" HorizontalAlignment="Left" Margin="10,286,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppSkype" Content="Skype" HorizontalAlignment="Left" Margin="10,309,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppStorePurchaseApp" Content="Store Purchase App" HorizontalAlignment="Left" Margin="10,332,0,0" VerticalAlignment="Top"/>
+                                    <CheckBox x:Name="chkAppWallet" Content="Wallet" HorizontalAlignment="Left" Margin="10,355,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppWindowsPhotos" Content="Windows Photos" HorizontalAlignment="Left" Margin="10,378,0,0" VerticalAlignment="Top"/>
+                                    <CheckBox x:Name="chkAppWindowsAlarms" Content="Windows Alarms" HorizontalAlignment="Left" Margin="10,401,0,0" VerticalAlignment="Top"/>
+                                    <CheckBox x:Name="chkAppWindowsCalculator" Content="Windows Calculator" HorizontalAlignment="Left" Margin="10,424,0,0" VerticalAlignment="Top"/>
+                                    <CheckBox x:Name="chkAppWindowsCamera" Content="Windows Camera" HorizontalAlignment="Left" Margin="10,447,0,0" VerticalAlignment="Top"/>
+                                    <CheckBox x:Name="chkAppMailAndCalendar" Content="Mail and Calendar" HorizontalAlignment="Left" Margin="10,470,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppFeedbackHub" Content="Feedback Hub" HorizontalAlignment="Left" Margin="10,493,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppWindowsMaps" Content="Windows Maps" HorizontalAlignment="Left" Margin="10,516,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppWindowsSoundsRecorder" Content="Windows Sounds Recorder" HorizontalAlignment="Left" Margin="10,539,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppWindowsStore" Content="Windows Store" HorizontalAlignment="Left" Margin="10,562,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkAppXboxApp" Content="Xbox App" HorizontalAlignment="Left" Margin="10,585,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppXboxGameOverlay" Content="Xbox Game Overlay" HorizontalAlignment="Left" Margin="10,608,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppXboxIdentityProvider" Content="Xbox Identity Provider" HorizontalAlignment="Left" Margin="10,631,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppXboxSpeechToText" Content="Xbox Speech To Text" HorizontalAlignment="Left" Margin="10,654,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppZuneMusic" Content="Zune Music" HorizontalAlignment="Left" Margin="10,677,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppZuneVideo" Content="Zune Video" HorizontalAlignment="Left" Margin="10,700,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <Line X1="0" Y1="{Binding Margin.Top, ElementName=chkAppZuneVideo}" X2="{Binding ActualWidth, ElementName=scrvW10Apps, Mode=OneWay}" Y2="{Binding Margin.Top, ElementName=chkAppZuneVideo}" Stroke="#FF979797" StrokeThickness="2" />
+                                    <CheckBox x:Name="chkAppGetHelp" Content="Get Help" HorizontalAlignment="Left" Margin="10,723,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppXboxTcui" Content="Xbox TCUI" HorizontalAlignment="Left" Margin="10,746,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <Line X1="0" Y1="{Binding Margin.Top, ElementName=chkAppXboxTcui}" X2="{Binding ActualWidth, ElementName=scrvW10Apps, Mode=OneWay}" Y2="{Binding Margin.Top, ElementName=chkAppXboxTcui}" Stroke="#FF979797" StrokeThickness="2" />
+                                    <CheckBox x:Name="chkAppHEIFImageExtension" Content="Microsoft.HEIFImageExtension" HorizontalAlignment="Left" Margin="10,769,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkMixedRealityPortal" Content="Microsoft.MixedReality.Portal" HorizontalAlignment="Left" Margin="10,792,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkMixedRealityHolographicFirstRun" Content="Mixed Reality: HolographicFirstRun" HorizontalAlignment="Left" Margin="10,815,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                                    <CheckBox x:Name="chkAppScreenSketch" Content="Microsoft.ScreenSketch" HorizontalAlignment="Left" Margin="10,838,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkAppVP9VideoExtensions" Content="Microsoft.VP9VideoExtensions" HorizontalAlignment="Left" Margin="10,861,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkAppWebMediaExtensions" Content="Microsoft.WebMediaExtensions" HorizontalAlignment="Left" Margin="10,884,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkAppWebpImageExtension" Content="Microsoft.WebpImageExtension" HorizontalAlignment="Left" Margin="10,907,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkAppXboxGamingOverlay" Content="Microsoft.XboxGamingOverlay" HorizontalAlignment="Left" Margin="10,930,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                    <CheckBox x:Name="chkAppYourPhone" Content="Microsoft.YourPhone" HorizontalAlignment="Left" Margin="10,953,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                                </Grid>
+                                -->
+                        </GroupBox>
+
                     </StackPanel>
-                </StackPanel>
-            </TabItem>
+                </ScrollViewer>
+            </Controls:MetroTabItem>
+            <Controls:MetroTabItem Header="Registry">
+                <Grid>
 
-            <!-- <StackPanel Orientation="Vertical" Margin="0,0,0,0">			 -->
-            <!-- <ScrollViewer  CanContentScroll="True" Height="200">        										 -->
-            <!-- <TextBlock Foreground="Gray" FontSize="14" Name="SandBox_Overview" TextWrapping="Wrap" />				 -->
-            <!-- </ScrollViewer> 		 -->
-            <!-- </StackPanel>		 -->
-
-            <!-- <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch" Margin="0,0,20,25"  VerticalAlignment="Center"> -->
-
-            <TabItem Name="Details"
-                     Header="Details">
-                <StackPanel Margin="0,0,0,0">
-                    <ScrollViewer  CanContentScroll="True"
-                                   Height="300"
-                                   HorizontalScrollBarVisibility="Auto"
-                                   VerticalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,20,0,0">
-                            <StackPanel Orientation="Vertical"
-                                        Margin="0,0,0,0">
-                                <StackPanel Name="Check_Drivers_Block"
-                                            Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconFontAwesome Kind="InfoSolid"
-                                                                   Margin="0,5,0,0" />
-                                    <!--<iconPacks:PackIconFontAwesome Kind="info"
-                                                                       Margin="0,5,0,0" />-->
-                                    <Label Foreground="#C9C6D3"
-                                           Content="Missing drivers:"
-                                           Margin="4,0,0,0"
-                                           Width="120" />
-                                    <StackPanel Name="Missing_Drivers_Block">
-                                        <Label Foreground="#C9C6D3"
-                                               Name="Missing_Drivers_Label"
-                                               Margin="0,0,0,0" />
-                                    </StackPanel>
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconMaterialLight Kind="Printer"
-                                                                     Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="Default printer:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="Printer"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconModern Kind="network"
-                                                              Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="IP address:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="My_IP"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconModern	 Kind="networkhome"
-                                                                 Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="MAC address:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="My_MAC"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconModern Kind="NetworkServer"
-                                                              Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="Domain_WKG_Label"
-                                           Content="Domain:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="Domain_name"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0"
-                                            Name="MECM_Client_Block">
-                                    <iconPacks:PackIconModern Kind="NetworkServer"
-                                                              Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="MECM client version:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <StackPanel Name="MECM_Client_Version_Block">
-                                        <Label Foreground="#C9C6D3"
-                                               Name="MECM_Client_Version_Label"
-                                               Margin="0,0,0,0" />
-                                    </StackPanel>
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconMaterial Kind="security"
-                                                                Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="Antivirus status:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="antivirus_Status_Label"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Name="Check_LastUpdate_Block"
-                                            Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconFontAwesome Kind="InfoSolid"
-                                                                   Margin="0,5,0,0" />
-                                    <!--<iconPacks:PackIconFontAwesome Kind="info"
-                                                                       Margin="0,5,0,0" />-->
-                                    <Label Foreground="#C9C6D3"
-                                           Content="Last update:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <StackPanel Name="antivirus_Last_Update_Block">
-                                        <Label Foreground="#C9C6D3"
-                                               Name="antivirus_Last_Update_Label"
-                                               Margin="0,0,0,0" />
-                                    </StackPanel>
-                                </StackPanel>
-
-                                <StackPanel Name="Check_LastScan_Block"
-                                            Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconFontAwesome Kind="InfoSolid"
-                                                                   Margin="0,5,0,0" />
-                                    <!--<iconPacks:PackIconFontAwesome Kind="info"
-                                                                       Margin="0,5,0,0" />-->
-                                    <Label Foreground="#C9C6D3"
-                                           Content="Last virus check:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <StackPanel Name="antivirus_Last_Scan_Block">
-                                        <Label Foreground="#C9C6D3"
-                                               Name="antivirus_Last_Scan_Label"
-                                               Margin="0,0,0,0" />
-                                    </StackPanel>
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconMaterial Kind="Security"
-                                                                Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="BIOS version:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="BIOS_Version"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconMaterial Kind="Monitor"
-                                                                Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="Graphic cards:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="Graphic_Card_details"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,0,0,0">
-                                    <iconPacks:PackIconModern Kind="ConnectionWifiVariant"
-                                                              Margin="0,5,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Content="Wifi card:"
-                                           Width="120"
-                                           Margin="4,0,0,0" />
-                                    <Label Foreground="#C9C6D3"
-                                           Name="Wifi_Card"
-                                           Margin="0,0,0,0" />
-                                </StackPanel>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-                </StackPanel>
-            </TabItem>
-
-            <TabItem Header="Support">
-                <StackPanel Orientation="Vertical"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal"
-                                Margin="0,20,0,0">
-                        <StackPanel Orientation="Vertical"
-                                    Margin="0,80,0,0">
-                            <Image Width="150"
-                                   Height="104"
-                                   Source="Images\support.png"
-                                   HorizontalAlignment="Center" />
-                        </StackPanel>
-
-                        <StackPanel Name="Issue_Block"
-                                    Orientation="Vertical"
-                                    Margin="20,10,0,0">
-                            <Label Foreground="#C9C6D3"
-                                   Content="An issue ?"
-                                   FontSize="25" />
-                            <StackPanel Name="Website_Block"
-                                        Orientation="Horizontal"
-                                        Margin="5,0,0,0">
-                                <iconPacks:PackIconFontAwesome Kind="InfoSolid"
-                                                               Margin="0,5,0,0" />
-                                <!--<iconPacks:PackIconFontAwesome Kind="info"
-                                                                       Margin="0,5,0,0" />-->
-                                <Label Name="Website"
-                                       Foreground="#C9C6D3"
-                                       Content="See our website for more infos"
-                                       Margin="4,0,0,0" />
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="5,0,0,0">
-                                <iconPacks:PackIconFontAwesome Kind="PhoneSolid"
-                                                               Margin="0,5,0,0" />
-                                <!--<iconPacks:PackIconFontAwesome Kind="phone"
-                                                                       Margin="0,5,0,0" />-->
-                                <Label Name="Our_Phone"
-                                       Foreground="#C9C6D3"
-                                       Content="0 900 000 000"
-                                       Margin="4,0,0,0" />
-                            </StackPanel>
-
-                            <StackPanel Name="Chat_Block"
-                                        Orientation="Horizontal"
-                                        Margin="5,0,0,0">
-                                <iconPacks:PackIconFontAwesome Kind="CommentSolid"
-                                                               Margin="0,5,0,0" />
-                                <!--<iconPacks:PackIconFontAwesome Kind="comments"
-                                                                       Margin="0,5,0,0" />-->
-                                <Label Name="Chat"
-                                       Foreground="#C9C6D3"
-                                       Content="Chat with us"
-                                       Margin="4,0,0,0" />
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="5,0,0,0">
-                                <!--<iconPacks:PackIconFontAwesome Kind="envelope"
-                                                                   Margin="0,5,0,0" />-->
-                                <iconPacks:PackIconFontAwesome Kind="EnvelopeSolid"
-                                                               Margin="0,5,0,0" />
-                                <Label Name="Mail"
-                                       Foreground="#C9C6D3"
-                                       Content="Send us a mail"
-                                       Margin="4,0,0,0" />
-                            </StackPanel>
-
-                            <StackPanel Name="Yammer_Block"
-                                        Orientation="Horizontal"
-                                        Margin="5,0,0,0">
-                                <iconPacks:PackIconSimpleIcons	 Kind="yammer"
-                                                                 Margin="0,5,0,0" />
-                                <Label Name="Yammer"
-                                       Foreground="#C9C6D3"
-                                       Content="Our Yammer"
-                                       Margin="4,0,0,0" />
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
-            </TabItem>
+                </Grid>
+            </Controls:MetroTabItem>
+            <Controls:MetroTabItem Header="Security">
+                <Grid>
+                    <!--BitLocker?-->
+                </Grid>
+            </Controls:MetroTabItem>
         </TabControl>
 
 

@@ -217,7 +217,9 @@
 
             <TabControl Name="Tab_control"
                         Height="350"
-                        TabStripPlacement="Top">
+                        TabStripPlacement="Top"
+                        Style="{DynamicResource MahApps.Styles.TabControl.AnimatedSingleRow}"
+                        SelectedIndex="0">
 
                 <TabItem Name="Overview"
                          Header="Overview">
