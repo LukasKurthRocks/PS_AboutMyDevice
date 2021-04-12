@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,11 @@ namespace AboutMyDevice_Interface {
             InitializeComponent();
 
             SetStatusBar("", "");
+
+            // set via PowerShell
+            var oc = new ObservableCollection<string>();
+            oc.Add("19041");
+            dgrUpgradeHistory.ItemsSource = oc;
         }
 
         private void Click_LaunchGitHubSite(object sender, RoutedEventArgs e) {
